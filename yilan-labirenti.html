@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Yılan Labirenti oyna. Değişen duvarlar, zorlu yollar ve hız! Labirentten kurtulup en yüksek skoru yapabilir misin?">
+    <meta name="keywords" content="yılan labirenti, labirent oyunu, yılan oyunları, ücretsiz labirent, zor yılan oyunu">
+    <title>Yılan Labirenti | Maze Runner - SnakeZilla TR</title>
+    <style>
+        /* Maze Theme: Amber & Dark */
+        body { margin: 0; background: #0f0f00; color: #ffcc00; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; touch-action: none; }
+        
+        #hud { position: absolute; top: 15px; background: rgba(255,204,0,0.1); padding: 10px 20px; border: 1px solid #ffcc00; border-radius: 10px; font-weight: bold; }
+        
+        canvas { background: #000; border: 4px solid #ffcc00; box-shadow: 0 0 20px rgba(255,204,0,0.2); }
+        
+        .overlay { position: absolute; background: rgba(0,0,0,0.95); border: 2px solid #ffcc00; padding: 40px; text-align: center; }
+        .play-btn { background: #ffcc00; color: #000; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; }
+        
+        .d-btn { width: 50px; height: 50px; background: #222; border: 1px solid #ffcc00; color: #ffcc00; display: flex; align-items: center; justify-content: center; }
+        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <div id="hud">LABİRENT | SKOR: <span id="scoreVal">0</span> | SEVİYE: <span id="levelVal">1</span></div>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+    <div class="controls">
+        <div></div><div id="btnUp" class="d-btn">▲</div><div></div>
+        <div id="btnLeft" class="d-btn">◄</div><div id="btnDown" class="d-btn">▼</div><div id="btnRight" class="d-btn">►</div>
+    </div>
+
+    <div id="startScreen" class="overlay">
+        <h1>YILAN LABİRENTİ</h1>
+        <button class="play-btn" onclick="initGame()">BAŞLA</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas"); const ctx = canvas.getContext("2d");
+        let snake = [{x: 5, y: 10}], food = {x: 15, y: 10}, walls = [], d = "RIGHT", nextD = "RIGHT";
+        let score = 0, level = 1, gameActive = false, tickRate = 180, lastTickTime = 0;
+
+        function initGame() {
+            document.getElementById("startScreen").style.display = "none";
+            snake = [{x: 5, y: 10}]; score = 0; level = 1; tickRate = 180; walls = [];
+            generateWalls(); spawnFood(); gameActive = true;
+            lastTickTime = performance.now();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function generateWalls() {
+            walls = [];
+            // Create fixed maze obstacles
+            for(let i=0; i<5; i++) {
+                walls.push({x: 5 + i, y: 5}, {x: 15 - i, y: 15});
+            }
+            if(level > 1) { // Add more walls as levels increase
+                for(let i=0; i<5; i++) walls.push({x: 10, y: i + 10});
+            }
+        }
+
+        function spawnFood() {
+            food = {x: Math.floor(Math.random()*20), y: Math.floor(Math.random()*20)};
+        }
+
+        function gameLoop(currentTime) {
+            if(!gameActive) return;
+            if(currentTime - lastTickTime >= tickRate) { logicTick(); lastTickTime = currentTime; }
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function logicTick() {
+            d = nextD;
+            let head = {x: snake[0].x, y: snake[0].y};
+            if(d=="LEFT") head.x--; if(d=="UP") head.y--; if(d=="RIGHT") head.x++; if(d=="DOWN") head.y++;
+
+            // Collision check: Wall, Self, or Out of bounds
+            if(head.x<0 || head.x>=20 || head.y<0 || head.y>=20 || 
+               snake.some(s=>s.x==head.x && s.y==head.y) ||
+               walls.some(w=>w.x==head.x && w.y==head.y)) {
+                gameActive = false; alert("LABİRENTTE KAYBOLDUNUZ! Skor: " + score); location.reload();
+            }
+
+            snake.unshift(head);
+            if(head.x == food.x && head.y == food.y) {
+                score++; document.getElementById("scoreVal").innerText = score;
+                if(score % 5 === 0) { level++; tickRate -= 10; document.getElementById("levelVal").innerText = level; generateWalls(); }
+                spawnFood();
+            } else snake.pop();
+        }
+
+        function draw() {
+            ctx.fillStyle = "#000"; ctx.fillRect(0,0,400,400);
+            
+            // Draw Walls
+            ctx.fillStyle = "#555";
+            walls.forEach(w => ctx.fillRect(w.x*20+2, w.y*20+2, 16, 16));
+
+            // Draw Snake & Food
+            ctx.fillStyle = "#ffcc00"; ctx.fillRect(food.x*20+2, food.y*20+2, 16, 16);
+            ctx.fillStyle = "#ffcc00"; 
+            snake.forEach(s => ctx.fillRect(s.x*20+2, s.y*20+2, 16, 16));
+        }
+
+        window.addEventListener('keydown', e => {
+            if(e.keyCode==37 && d!="RIGHT") nextD="LEFT";
+            else if(e.keyCode==38 && d!="DOWN") nextD="UP";
+            else if(e.keyCode==39 && d!="LEFT") nextD="RIGHT";
+            else if(e.keyCode==40 && d!="UP") nextD="DOWN";
+        });
+        
+        const bindBtn = (id, dir) => document.getElementById(id).addEventListener("touchstart", (e)=>{e.preventDefault(); nextD=dir;});
+        bindBtn("btnUp", "UP"); bindBtn("btnDown", "DOWN"); bindBtn("btnLeft", "LEFT"); bindBtn("btnRight", "RIGHT");
+    </script>
+</body>
+</html>
