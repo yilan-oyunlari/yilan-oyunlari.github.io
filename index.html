@@ -39,16 +39,44 @@
             position: fixed;
             width: 100%;
             height: 100%;
-            background-image:
-                radial-gradient(rgba(16,255,178,0.12) 1px, transparent 1px);
-            background-size: 40px 40px;
-            opacity: 0.4;
-            z-index: -1;
-            animation: moveBg 25s linear infinite;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(16,255,178,0.12), transparent 25%),
+                radial-gradient(circle at 80% 30%, rgba(0,180,255,0.12), transparent 25%),
+                radial-gradient(circle at 50% 80%, rgba(140,0,255,0.10), transparent 30%);
+            z-index: -2;
+            animation: pulseBg 12s ease-in-out infinite alternate;
         }
 
-        @keyframes moveBg {
-            0% { transform: translateY(0px); }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 35px 35px;
+            opacity: 0.25;
+            z-index: -1;
+            animation: moveGrid 20s linear infinite;
+        }
+
+        @keyframes pulseBg {
+            0% {
+                transform: scale(1);
+                filter: blur(0px);
+            }
+            100% {
+                transform: scale(1.05);
+                filter: blur(10px);
+            }
+        }
+
+        @keyframes moveGrid {
+            0% {
+                transform: translateY(0px);
+            }
+            100% {
+                transform: translateY(35px);
+            }
+        }
             100% { transform: translateY(40px); }
         }
 
@@ -110,7 +138,7 @@
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             align-items: center;
             gap: 50px;
-            padding: 70px 0 100px;
+            padding: 20px 0 50px;
         }
 
         .hero-text h1 {
@@ -264,6 +292,19 @@
             transition: 0.4s ease;
         }
 
+        .game-card::before {
+            content:'';
+            position:absolute;
+            inset:0;
+            background:linear-gradient(180deg, transparent, rgba(0,0,0,0.7));
+            opacity:0;
+            transition:0.4s;
+        }
+
+        .game-card:hover::before {
+            opacity:1;
+        }
+
         .game-card:hover {
             transform: translateY(-8px);
             border-color: rgba(16,255,178,0.5);
@@ -311,6 +352,15 @@
         .rating {
             color: #ffd700;
             font-size: 0.95rem;
+        }
+
+        .play-btn {
+            transition:0.3s;
+        }
+
+        .play-btn:hover {
+            transform:scale(1.05);
+            box-shadow:0 0 20px rgba(16,255,178,0.35);
         }
 
         .play-btn {
@@ -510,17 +560,16 @@
                 <a href="#leaderboard">Leaderboard</a>
                 <a href="#features">Features</a>
                 <a href="#support">Support</a>
-                <a href="#" class="profile-btn">Login / Sign Up</a>
             </div>
         </nav>
 
         <!-- HERO -->
         <section class="hero">
             <div class="hero-text">
-                <h1>Play The Most <span>Addictive Snake Games</span> Online</h1>
+                <h1>Play The Legendary <span>Nokia Snake Game</span> Online</h1>
 
                 <p>
-                    Türkiye'nin premium arcade gaming portalına hoş geldiniz. Klasik Nokia deneyiminden modern neon arenasına kadar en iyi snake oyunlarını ultra hızlı ve ücretsiz oynayın.
+                    Nokia style klasik yılan oyunundan modern neon arcade battles tak premium snake experience ka maza lein. Hemen game start karein aur high score banayein.
                 </p>
 
                 <div class="hero-buttons">
@@ -531,7 +580,12 @@
 
             <div class="hero-visual">
                 <div class="preview-card">
-                    <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1200&auto=format&fit=crop" alt="Snake Game Preview">
+                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop" alt="Snake Game Preview">
+                </div>
+
+                <div style="position:absolute; left:20px; bottom:20px; background:rgba(0,0,0,0.6); padding:14px 20px; border-radius:16px; backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.1);">
+                    <div style="font-size:0.8rem; color:#9ca3af; margin-bottom:6px;">LIVE NOW</div>
+                    <div style="font-weight:700; color:#10ffb2;">Nokia Snake Championship</div>
                 </div>
 
                 <div class="floating-badge">
@@ -566,20 +620,32 @@
 
         <!-- GAMES -->
         <section id="games">
-            <h2 class="section-title">Featured Snake Games</h2>
+            <h2 class="section-title">All Snake Game Modes</h2>
             <p class="section-desc">
-                Explore competitive arenas, retro classics and futuristic survival modes crafted for true arcade lovers.
+                Explore all 10 premium snake game modes including Nokia Retro, Ninja Speed, Ghost Survival and futuristic portal adventures.
             </p>
 
             <div class="game-grid">
 
                 <div class="game-card">
-                    <img src="https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Classic Snake">
+                    <img src="https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Nokia Snake">
+                    <div class="game-content">
+                        <span class="tag">Retro • Nokia</span>
+                        <h3>Nokia Yılan</h3>
+                        <p>Classic Nokia snake gameplay with nostalgic pixel vibes.</p>
+                        <div class="card-footer">
+                            <span class="rating">★★★★★ 5.0</span>
+                            <a href="nokia-yilan-oyunu.html" class="play-btn">Play</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Classic Snake">
                     <div class="game-content">
                         <span class="tag">Arcade • Retro</span>
                         <h3>Klasik Yılan</h3>
-                        <p>Nostaljik Nokia hissi ile eski tarz snake deneyimi yaşayın.</p>
-
+                        <p>Traditional snake mode with smooth controls and fast action.</p>
                         <div class="card-footer">
                             <span class="rating">★★★★★ 4.9</span>
                             <a href="klasik-yilan-oyunu.html" class="play-btn">Play</a>
@@ -588,12 +654,11 @@
                 </div>
 
                 <div class="game-card">
-                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Modern Snake">
+                    <img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Modern Snake">
                     <div class="game-content">
                         <span class="tag">Neon • Action</span>
                         <h3>Modern Yılan</h3>
-                        <p>Ultra smooth grafikler ve hız odaklı modern arcade savaşları.</p>
-
+                        <p>Modern graphics and intense speed-based gameplay arena.</p>
                         <div class="card-footer">
                             <span class="rating">★★★★★ 5.0</span>
                             <a href="modern-yilan-oyunu.html" class="play-btn">Play</a>
@@ -602,26 +667,89 @@
                 </div>
 
                 <div class="game-card">
-                    <img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Maze Snake">
+                    <img src="https://images.unsplash.com/photo-1511882150382-421056c89033?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Old Snake">
                     <div class="game-content">
-                        <span class="tag">Puzzle • Labyrinth</span>
-                        <h3>Yılan Labirenti</h3>
-                        <p>Dar koridorlarda zekanızı ve reflekslerinizi test edin.</p>
-
+                        <span class="tag">Classic • Pixel</span>
+                        <h3>Eski Yılan</h3>
+                        <p>Old-school pixel snake challenge inspired by retro consoles.</p>
                         <div class="card-footer">
-                            <span class="rating">★★★★☆ 4.8</span>
+                            <span class="rating">★★★★☆ 4.7</span>
+                            <a href="yilan-oyunu-eski.html" class="play-btn">Play</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Fast Ninja">
+                    <div class="game-content">
+                        <span class="tag">Speed • Ninja</span>
+                        <h3>Hızlı Ninja</h3>
+                        <p>Ultra fast reflex gameplay with ninja speed mechanics.</p>
+                        <div class="card-footer">
+                            <span class="rating">★★★★★ 4.9</span>
+                            <a href="hizli-yilan-oyunu.html" class="play-btn">Play</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Portal Warp">
+                    <div class="game-content">
+                        <span class="tag">Portal • Sci-Fi</span>
+                        <h3>Portal Warp</h3>
+                        <p>Teleport through futuristic portals and survive longer.</p>
+                        <div class="card-footer">
+                            <span class="rating">★★★★★ 4.8</span>
+                            <a href="portal-yilan-oyunu.html" class="play-btn">Play</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Poison Forest">
+                    <div class="game-content">
+                        <span class="tag">Forest • Survival</span>
+                        <h3>Zehirli Orman</h3>
+                        <p>Dangerous jungle map with poison traps and hidden enemies.</p>
+                        <div class="card-footer">
+                            <span class="rating">★★★★☆ 4.6</span>
+                            <a href="zehirli-yilan-oyunu.html" class="play-btn">Play</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <img src="https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Minefield">
+                    <div class="game-content">
+                        <span class="tag">Trap • Hardcore</span>
+                        <h3>Mayın Tarlası</h3>
+                        <p>Avoid hidden mines while collecting power foods.</p>
+                        <div class="card-footer">
+                            <span class="rating">★★★★☆ 4.7</span>
+                            <a href="mayin-tarlasi-yilan.html" class="play-btn">Play</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Labyrinth">
+                    <div class="game-content">
+                        <span class="tag">Maze • Puzzle</span>
+                        <h3>Yılan Labirenti</h3>
+                        <p>Escape tight maze corridors and test your strategy skills.</p>
+                        <div class="card-footer">
+                            <span class="rating">★★★★★ 4.9</span>
                             <a href="yilan-labirenti.html" class="play-btn">Play</a>
                         </div>
                     </div>
                 </div>
 
                 <div class="game-card">
-                    <img src="https://images.unsplash.com/photo-1511882150382-421056c89033?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Ghost Snake">
+                    <img src="https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Ghost Snake">
                     <div class="game-content">
-                        <span class="tag">Stealth • Hardcore</span>
+                        <span class="tag">Ghost • Hardcore</span>
                         <h3>Hayalet Modu</h3>
-                        <p>Görünmez engellerle dolu zorlu ghost survival arenası.</p>
-
+                        <p>Invisible obstacles and dark mode survival gameplay.</p>
                         <div class="card-footer">
                             <span class="rating">★★★★★ 4.9</span>
                             <a href="ghost-yilan-oyunu.html" class="play-btn">Play</a>
@@ -717,6 +845,13 @@
             <p class="section-desc">
                 Competitive gaming experience designed for speed, immersion and future monetization scalability.
             </p>
+
+            <div style="display:flex; justify-content:center; gap:18px; flex-wrap:wrap; margin-bottom:45px;">
+                <span style="padding:10px 18px; border-radius:40px; background:rgba(16,255,178,0.12); border:1px solid rgba(16,255,178,0.25);">🎮 Arcade</span>
+                <span style="padding:10px 18px; border-radius:40px; background:rgba(0,180,255,0.12); border:1px solid rgba(0,180,255,0.25);">⚡ Fast Action</span>
+                <span style="padding:10px 18px; border-radius:40px; background:rgba(140,0,255,0.12); border:1px solid rgba(140,0,255,0.25);">👻 Hardcore Modes</span>
+                <span style="padding:10px 18px; border-radius:40px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1);">🏆 Leaderboards</span>
+            </div>
 
             <div class="features">
 
