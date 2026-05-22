@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Eski Yılan Oyunu oyna. 80'lerin atari salonlarını evinize getiren retro yılan oyunu deneyimi. Ücretsiz ve reklamsız!">
+    <meta name="keywords" content="eski yılan oyunu, atari yılan oyunu, retro yılan, klasik arcade oyunu">
+    <title>Eski Yılan Oyunu | Retro Arcade - SnakeZilla TR</title>
+    <style>
+        /* CRT Arcade Theme */
+        body { 
+            margin: 0; background: #000; color: #33ff33; font-family: 'Courier New', monospace;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;
+        }
+        
+        /* CRT Scanline Effect */
+        #crt-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%; pointer-events: none; z-index: 20;
+        }
+
+        #hud { margin-bottom: 10px; font-size: 20px; text-shadow: 0 0 5px #33ff33; }
+        canvas { background: #0a0a0a; border: 4px solid #33ff33; box-shadow: 0 0 20px rgba(51, 255, 51, 0.2); }
+        
+        .overlay { position: absolute; background: #000; border: 2px solid #33ff33; padding: 30px; text-align: center; z-index: 10; }
+        .play-btn { background: #33ff33; color: #000; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; }
+        
+        .d-btn { width: 50px; height: 50px; border: 1px solid #33ff33; color: #33ff33; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div id="crt-overlay"></div>
+    <div id="hud">SKOR: <span id="scoreVal">0</span> | REKOR: <span id="highScoreVal">0</span></div>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+    <div class="controls">
+        <div></div><div id="btnUp" class="d-btn">▲</div><div></div>
+        <div id="btnLeft" class="d-btn">◄</div><div id="btnDown" class="d-btn">▼</div><div id="btnRight" class="d-btn">►</div>
+    </div>
+
+    <div id="startScreen" class="overlay">
+        <h1>ESKİ YILAN</h1>
+        <button class="play-btn" onclick="initGame()">BAŞLA</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas"); const ctx = canvas.getContext("2d");
+        let box = 20, score = 0, snake = [{x: 5, y: 10}], food = {x: 15, y: 10}, d = "RIGHT", nextD = "RIGHT";
+        let gameActive = false, tickRate = 200, lastTickTime = 0;
+
+        function initGame() {
+            document.getElementById("startScreen").style.display = "none";
+            snake = [{x: 5, y: 10}]; score = 0; d = "RIGHT"; nextD = "RIGHT"; gameActive = true;
+            lastTickTime = performance.now();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function gameLoop(currentTime) {
+            if(!gameActive) return;
+            let elapsed = currentTime - lastTickTime;
+            if(elapsed >= tickRate) {
+                logicTick();
+                lastTickTime = currentTime;
+            }
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function logicTick() {
+            d = nextD;
+            let head = {x: snake[0].x, y: snake[0].y};
+            if(d=="LEFT") head.x--; if(d=="UP") head.y--; if(d=="RIGHT") head.x++; if(d=="DOWN") head.y++;
+
+            if(head.x<0 || head.x>=20 || head.y<0 || head.y>=20 || snake.some(s=>s.x==head.x && s.y==head.y)) {
+                gameActive = false; alert("OYUN BİTTİ! Skor: " + score); location.reload();
+            }
+
+            snake.unshift(head);
+            if(head.x == food.x && head.y == food.y) {
+                score++; document.getElementById("scoreVal").innerText = score;
+                food = {x: Math.floor(Math.random()*20), y: Math.floor(Math.random()*20)};
+            } else snake.pop();
+        }
+
+        function draw() {
+            ctx.fillStyle = "#000"; ctx.fillRect(0,0,400,400);
+            ctx.fillStyle = "#33ff33";
+            ctx.fillRect(food.x*20+2, food.y*20+2, 16, 16); // Retro square food
+            snake.forEach(s => ctx.fillRect(s.x*20+2, s.y*20+2, 16, 16));
+        }
+
+        window.addEventListener('keydown', e => {
+            if(e.keyCode==37 && d!="RIGHT") nextD="LEFT";
+            else if(e.keyCode==38 && d!="DOWN") nextD="UP";
+            else if(e.keyCode==39 && d!="LEFT") nextD="RIGHT";
+            else if(e.keyCode==40 && d!="UP") nextD="DOWN";
+        });
+        
+        const bindBtn = (id, dir) => document.getElementById(id).addEventListener("touchstart", (e)=>{e.preventDefault(); nextD=dir;});
+        bindBtn("btnUp", "UP"); bindBtn("btnDown", "DOWN"); bindBtn("btnLeft", "LEFT"); bindBtn("btnRight", "RIGHT");
+    </script>
+</body>
+</html>
