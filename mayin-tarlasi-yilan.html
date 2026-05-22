@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Mayın Tarlası Yılan oyunu. Sahadaki bombalardan kaçın, fareleri toplayın ve hayatta kalın! Heyecan verici stratejik yılan oyunu.">
+    <meta name="keywords" content="mayın tarlası yılan oyunu, bomba yılan oyunu, zor yılan oyunu, ücretsiz oyunlar">
+    <title>Mayın Tarlası Yılan | Minefield - SnakeZilla TR</title>
+    <style>
+        /* Danger Zone Theme */
+        body { margin: 0; background: #1a0000; color: #fff; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; touch-action: none; }
+        
+        #hud { position: absolute; top: 15px; background: rgba(255,0,0,0.2); padding: 10px 20px; border: 1px solid #ff4757; border-radius: 10px; color: #ff4757; font-weight: bold; }
+        
+        canvas { background: #000; border: 4px solid #ff4757; box-shadow: 0 0 20px rgba(255,71,87,0.3); }
+        
+        .overlay { position: absolute; background: rgba(0,0,0,0.9); border: 2px solid #ff4757; padding: 40px; text-align: center; }
+        .play-btn { background: #ff4757; color: #fff; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; }
+        
+        .d-btn { width: 50px; height: 50px; background: #222; border: 1px solid #ff4757; color: #ff4757; display: flex; align-items: center; justify-content: center; }
+        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <div id="hud">MAYIN TARLASI | SKOR: <span id="scoreVal">0</span></div>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+    <div class="controls">
+        <div></div><div id="btnUp" class="d-btn">▲</div><div></div>
+        <div id="btnLeft" class="d-btn">◄</div><div id="btnDown" class="d-btn">▼</div><div id="btnRight" class="d-btn">►</div>
+    </div>
+
+    <div id="startScreen" class="overlay">
+        <h1>MAYIN TARLASI</h1>
+        <button class="play-btn" onclick="initGame()">OYUNA BAŞLA</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas"); const ctx = canvas.getContext("2d");
+        let snake = [{x: 5, y: 10}], food = {x: 15, y: 10}, mines = [], d = "RIGHT", nextD = "RIGHT";
+        let score = 0, gameActive = false, tickRate = 180, lastTickTime = 0;
+
+        function initGame() {
+            document.getElementById("startScreen").style.display = "none";
+            snake = [{x: 5, y: 10}]; mines = []; score = 0; d = "RIGHT"; gameActive = true;
+            spawnMines(3); spawnFood();
+            lastTickTime = performance.now();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function spawnMines(count) {
+            for(let i=0; i<count; i++) {
+                mines.push({x: Math.floor(Math.random()*20), y: Math.floor(Math.random()*20)});
+            }
+        }
+
+        function spawnFood() {
+            food = {x: Math.floor(Math.random()*20), y: Math.floor(Math.random()*20)};
+        }
+
+        function gameLoop(currentTime) {
+            if(!gameActive) return;
+            if(currentTime - lastTickTime >= tickRate) {
+                logicTick(); lastTickTime = currentTime;
+            }
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function logicTick() {
+            d = nextD;
+            let head = {x: snake[0].x, y: snake[0].y};
+            if(d=="LEFT") head.x--; if(d=="UP") head.y--; if(d=="RIGHT") head.x++; if(d=="DOWN") head.y++;
+
+            // Hit Wall, Self, OR Mine
+            if(head.x<0 || head.x>=20 || head.y<0 || head.y>=20 || 
+               snake.some(s=>s.x==head.x && s.y==head.y) || 
+               mines.some(m=>m.x==head.x && m.y==head.y)) {
+                gameActive = false; alert("MAYINA BASTINIZ! Skor: " + score); location.reload();
+            }
+
+            snake.unshift(head);
+            if(head.x == food.x && head.y == food.y) {
+                score++; document.getElementById("scoreVal").innerText = score;
+                if(score % 3 === 0) spawnMines(1); // Har 3 puan sonra 1 yeni mayın
+                spawnFood();
+            } else snake.pop();
+        }
+
+        function draw() {
+            ctx.fillStyle = "#000"; ctx.fillRect(0,0,400,400);
+            
+            // Draw Mines
+            ctx.fillStyle = "#ff4757";
+            mines.forEach(m => {
+                ctx.beginPath(); ctx.arc(m.x*20+10, m.y*20+10, 8, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#fff"; ctx.font = "12px Arial"; ctx.fillText("X", m.x*20+6, m.y*20+14);
+                ctx.fillStyle = "#ff4757";
+            });
+
+            // Draw Snake & Food
+            ctx.fillStyle = "#ff4757"; ctx.fillRect(food.x*20+2, food.y*20+2, 16, 16);
+            snake.forEach(s => ctx.fillRect(s.x*20+2, s.y*20+2, 16, 16));
+        }
+
+        window.addEventListener('keydown', e => {
+            if(e.keyCode==37 && d!="RIGHT") nextD="LEFT";
+            else if(e.keyCode==38 && d!="DOWN") nextD="UP";
+            else if(e.keyCode==39 && d!="LEFT") nextD="RIGHT";
+            else if(e.keyCode==40 && d!="UP") nextD="DOWN";
+        });
+        
+        const bindBtn = (id, dir) => document.getElementById(id).addEventListener("touchstart", (e)=>{e.preventDefault(); nextD=dir;});
+        bindBtn("btnUp", "UP"); bindBtn("btnDown", "DOWN"); bindBtn("btnLeft", "LEFT"); bindBtn("btnRight", "RIGHT");
+    </script>
+</body>
+</html>
