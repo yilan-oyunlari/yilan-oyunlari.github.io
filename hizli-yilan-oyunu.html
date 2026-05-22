@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Hızlı Yılan Oyunu oyna. Reflekslerini test et, engelleri aş ve en yüksek skoru yap! Ücretsiz ve mobil uyumlu modern yılan oyunu.">
+    <meta name="keywords" content="hızlı yılan oyunu, yılan oyunu oyna, aksiyon yılan oyunu, ücretsiz tarayıcı oyunları">
+    <title>Hızlı Yılan Oyunu | Speed Ninja - SnakeZilla TR</title>
+    <style>
+        /* Cyber-Ninja Red Theme */
+        body {
+            margin: 0; padding: 0; overflow: hidden; background-color: #0a0505;
+            background-image: linear-gradient(rgba(255, 0, 60, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 0, 60, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;
+            touch-action: none;
+        }
+
+        #hud {
+            position: absolute; top: 15px; width: 90vw; max-width: 400px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(20, 5, 5, 0.6); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+            padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(255, 0, 60, 0.3);
+            box-sizing: border-box; z-index: 5; font-weight: bold; font-size: 16px; color: #ff003c;
+        }
+
+        .hud-item span { color: #fff; font-size: 18px; margin-left: 5px; }
+
+        canvas {
+            background: #000; border-radius: 12px; border: 2px solid #ff003c;
+            box-shadow: 0 0 30px rgba(255, 0, 60, 0.3); display: block; max-width: 95vw;
+        }
+
+        .overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(10, 5, 5, 0.95); padding: 40px; border-radius: 20px;
+            border: 1px solid #ff003c; box-shadow: 0 0 40px rgba(255, 0, 60, 0.4);
+            text-align: center; z-index: 10; width: 80vw; max-width: 350px;
+        }
+
+        .overlay h1 { margin-top: 0; color: #ff003c; font-size: 32px; letter-spacing: 3px; text-transform: uppercase; text-shadow: 0 0 10px rgba(255,0,60,0.5);}
+
+        .play-btn {
+            background: linear-gradient(135deg, #ff003c, #b3002a); color: #fff;
+            border: none; padding: 15px 40px; font-size: 22px; font-weight: bold;
+            border-radius: 30px; cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 0, 60, 0.4); text-transform: uppercase; margin-top: 10px;
+        }
+        .play-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 25px rgba(255, 0, 60, 0.6); }
+        .play-btn:active { transform: translateY(1px); }
+
+        .secondary-btn {
+            background: transparent; color: #ff003c; border: 2px solid #ff003c;
+            padding: 10px 20px; font-size: 16px; font-weight: bold; border-radius: 20px;
+            cursor: pointer; margin-top: 15px; transition: 0.3s;
+        }
+        .secondary-btn:hover { background: #ff003c; color: #000; }
+
+        /* Level Up Flash Animation */
+        #flashOverlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #ff003c; opacity: 0; pointer-events: none; z-index: 20;
+        }
+        .flash-anim { animation: flash 0.4s ease-out; }
+        @keyframes flash { 0% { opacity: 0.6; } 100% { opacity: 0; } }
+        
+        #levelUpText {
+            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 40px; color: #fff; font-weight: bold; text-shadow: 0 0 20px #ff003c;
+            opacity: 0; pointer-events: none; z-index: 21; transition: 0.5s;
+        }
+        .text-pop { animation: popText 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popText { 0% { transform: translate(-50%, -40%) scale(0.5); opacity: 1; } 80% { transform: translate(-50%, -60%) scale(1.2); opacity: 1; } 100% { opacity: 0; } }
+
+        /* Mobile D-Pad Controls */
+        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; width: 220px; }
+        .d-btn { background: rgba(255, 0, 60, 0.05); border: 1px solid rgba(255, 0, 60, 0.3); color: #ff003c; height: 60px; border-radius: 12px; font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; }
+        .d-btn:active { background: #ff003c; color: #000; transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div id="hud">
+        <div class="hud-item">SKOR:<span id="scoreVal">0</span></div>
+        <div class="hud-item" style="color:#fff;">SEVİYE:<span id="levelVal">1</span></div>
+        <div class="hud-item">REKOR:<span id="highScoreVal">0</span></div>
+    </div>
+
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+    <div id="flashOverlay"></div>
+    <div id="levelUpText">HIZ ARTIYOR!</div>
+
+    <div class="controls">
+        <div></div><div id="btnUp" class="d-btn">▲</div><div></div>
+        <div id="btnLeft" class="d-btn">◄</div><div id="btnDown" class="d-btn">▼</div><div id="btnRight" class="d-btn">►</div>
+    </div>
+
+    <div id="startScreen" class="overlay">
+        <h1>HIZLI YILAN</h1>
+        <p style="color:#aaa; margin-bottom: 25px;">Sınırlarını Zorla! Sadece refleksleri güçlü olanlar hayatta kalır.</p>
+        <button class="play-btn" onclick="initGame()">OYNA</button>
+    </div>
+
+    <div id="gameOverScreen" class="overlay" style="display: none;">
+        <h1>OYUN BİTTİ</h1>
+        <h2 style="margin: 10px 0;">Skor: <span id="finalScore" style="color:#ff003c;">0</span></h2>
+        <button class="play-btn" style="margin-top: 15px;" onclick="document.getElementById('gameOverScreen').style.display='none'; document.getElementById('startScreen').style.display='block';">YENİDEN BAŞLA</button>
+        <br>
+        <button class="secondary-btn" onclick="shareScore()">Skoru Paylaş 📤</button>
+    </div>
+
+    <script>
+        // --- Web Audio API (Faster/Aggressive SFX for Speed Ninja) ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+        let bgmOscillator, bgmGain;
+        let isMusicPlaying = false;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playSFX(type) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            let now = audioCtx.currentTime;
+
+            if (type === 'eat') {
+                osc.type = 'triangle'; // Sharper sound for shuriken
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(1600, now + 0.05);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                osc.start(now); osc.stop(now + 0.05);
+            } else if (type === 'die') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(20, now + 0.4);
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now); osc.stop(now + 0.4);
+            } else if (type === 'levelUp') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.setValueAtTime(800, now + 0.1);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.2);
+                osc.start(now); osc.stop(now + 0.2);
+            }
+        }
+
+        // Fast Paced BGM
+        let bgmInterval;
+        const notes = [329.63, 392.00, 440.00, 329.63]; // Fast intense arp
+        let noteIndex = 0;
+
+        function startBGM() {
+            if(!audioCtx) return;
+            stopBGM(); isMusicPlaying = true;
+            bgmInterval = setInterval(() => {
+                if(!isMusicPlaying) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(notes[noteIndex], audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.03, audioCtx.currentTime); 
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+                noteIndex = (noteIndex + 1) % notes.length;
+            }, 180); // Very fast tempo
+        }
+
+        function stopBGM() { isMusicPlaying = false; if(bgmInterval) clearInterval(bgmInterval); }
+
+        // --- Game Logic ---
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const gridSize = 20;
+        const tileCount = canvas.width / gridSize;
+        
+        let score = 0, level = 1, highScore = localStorage.getItem("hizliYilanRekor") || 0;
+        document.getElementById("highScoreVal").innerText = highScore;
+        
+        let snake = []; let prevSnake = []; 
+        let food = {x: 0, y: 0};
+        let d = "RIGHT", nextD = "RIGHT";
+        let gameActive = false, lastTickTime = 0, reqAnimFrameId;
+        
+        // Starts faster, drops faster!
+        let tickRate = 120; 
+        let blurAlpha = 0.4; // Motion blur intensity
+
+        function lerp(start, end, amt) { return (1 - amt) * start + amt * end; }
+
+        function initGame() {
+            initAudio(); document.getElementById("startScreen").style.display = "none";
+            
+            snake = [{x: 5, y: 10}, {x: 4, y: 10}, {x: 3, y: 10}];
+            prevSnake = JSON.parse(JSON.stringify(snake));
+            d = "RIGHT"; nextD = "RIGHT";
+            score = 0; level = 1; tickRate = 120; blurAlpha = 0.4;
+            
+            document.getElementById("scoreVal").innerText = score;
+            document.getElementById("levelVal").innerText = level;
+            
+            spawnFood(); startBGM(); gameActive = true;
+            lastTickTime = performance.now();
+            
+            if(reqAnimFrameId) cancelAnimationFrame(reqAnimFrameId);
+            
+            // Hard clear for fresh start
+            ctx.fillStyle = "#000"; ctx.fillRect(0,0, canvas.width, canvas.height);
+            gameLoop(performance.now());
+        }
+
+        function spawnFood() {
+            let valid = false;
+            while(!valid) {
+                food = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
+                valid = true;
+                snake.forEach(s => { if(s.x === food.x && s.y === food.y) valid = false; });
+            }
+        }
+
+        function logicTick() {
+            d = nextD;
+            prevSnake = JSON.parse(JSON.stringify(snake));
+
+            let head = {x: snake[0].x, y: snake[0].y};
+            if(d == "LEFT") head.x -= 1;
+            if(d == "UP") head.y -= 1;
+            if(d == "RIGHT") head.x += 1;
+            if(d == "DOWN") head.y += 1;
+
+            if(head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount || 
+               snake.some(s => s.x === head.x && s.y === head.y)) {
+                gameOver(); return;
+            }
+
+            snake.unshift(head);
+
+            if(head.x === food.x && head.y === food.y) {
+                score++; playSFX('eat');
+                document.getElementById("scoreVal").innerText = score;
+                
+                if(score % 5 === 0) {
+                    level++;
+                    tickRate = Math.max(30, tickRate - 15); // Insane speed increase
+                    if(blurAlpha > 0.15) blurAlpha -= 0.05; // Longer motion blur trail
+                    document.getElementById("levelVal").innerText = level;
+                    playSFX('levelUp');
+                    
+                    let flash = document.getElementById("flashOverlay");
+                    let txt = document.getElementById("levelUpText");
+                    flash.classList.add("flash-anim"); txt.classList.add("text-pop");
+                    setTimeout(() => { flash.classList.remove("flash-anim"); txt.classList.remove("text-pop"); }, 1000);
+                }
+                spawnFood();
+            } else {
+                snake.pop(); 
+            }
+        }
+
+        function gameOver() {
+            gameActive = false; stopBGM(); playSFX('die');
+            if(score > highScore) {
+                highScore = score;
+                localStorage.setItem("hizliYilanRekor", highScore);
+                document.getElementById("highScoreVal").innerText = highScore;
+            }
+            document.getElementById("finalScore").innerText = score;
+            document.getElementById("gameOverScreen").style.display = "block";
+        }
+
+        // Draw Ninja Shuriken
+        function drawShuriken(fx, fy) {
+            ctx.fillStyle = "#ffffff"; ctx.shadowBlur = 10; ctx.shadowColor = "#00d0ff"; 
+            ctx.beginPath();
+            ctx.moveTo(fx, fy-10); ctx.lineTo(fx+3, fy-3); ctx.lineTo(fx+10, fy); ctx.lineTo(fx+3, fy+3);
+            ctx.lineTo(fx, fy+10); ctx.lineTo(fx-3, fy+3); ctx.lineTo(fx-10, fy); ctx.lineTo(fx-3, fy-3);
+            ctx.closePath(); ctx.fill(); 
+            ctx.fillStyle = "#050505"; ctx.beginPath(); ctx.arc(fx, fy, 2, 0, Math.PI*2); ctx.fill(); 
+            ctx.shadowBlur = 0;
+        }
+
+        function gameLoop(currentTime) {
+            if(!gameActive) return;
+            reqAnimFrameId = requestAnimationFrame(gameLoop);
+
+            let elapsedTime = currentTime - lastTickTime;
+            
+            if(elapsedTime >= tickRate) {
+                logicTick();
+                lastTickTime = currentTime;
+                elapsedTime = 0; 
+            }
+
+            let progress = Math.min(elapsedTime / tickRate, 1);
+            draw(progress);
+        }
+
+        function draw(progress) {
+            // Motion Blur Effect (Semi-transparent black overlay instead of clearRect)
+            ctx.fillStyle = `rgba(0, 0, 0, ${blurAlpha})`; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Food
+            let fx = food.x * gridSize + gridSize/2;
+            let fy = food.y * gridSize + gridSize/2;
+            drawShuriken(fx, fy);
+
+            // Draw Lerped Snake
+            for(let i = 0; i < snake.length; i++) {
+                let s = snake[i]; let p = prevSnake[i] || s; 
+                let drawX = lerp(p.x, s.x, progress) * gridSize;
+                let drawY = lerp(p.y, s.y, progress) * gridSize;
+
+                // Rank Evolution Colors based on Level
+                let headColor = level >= 5 ? "#333" : level === 4 ? "#fff" : level === 3 ? "#ffeb3b" : level === 2 ? "#00d0ff" : "#ff003c";
+                let bodyColor = level >= 5 ? "#1a1a1a" : level === 4 ? "#ccc" : level === 3 ? "#b3a429" : level === 2 ? "#008ab3" : "#b3002a";
+
+                ctx.fillStyle = i === 0 ? headColor : bodyColor;
+                if(i===0) { ctx.shadowBlur = 10; ctx.shadowColor = headColor; }
+                
+                ctx.beginPath(); ctx.arc(drawX + gridSize/2, drawY + gridSize/2, gridSize/2.2, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0;
+
+                if(i === 0) {
+                    ctx.fillStyle = level >= 5 ? "#ff003c" : "#fff"; // Glowing red eyes for shadow ninja
+                    if(level >= 5) { ctx.shadowBlur = 5; ctx.shadowColor = "#ff003c"; }
+                    ctx.beginPath(); ctx.arc(drawX + gridSize/2 + (d=="RIGHT"?4:d=="LEFT"?-4:0), drawY + gridSize/2 + (d=="DOWN"?4:d=="UP"?-4:0) - 3, 2, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(drawX + gridSize/2 + (d=="RIGHT"?4:d=="LEFT"?-4:0), drawY + gridSize/2 + (d=="DOWN"?4:d=="UP"?-4:0) + 3, 2, 0, Math.PI*2); ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            }
+        }
+
+        // Input
+        window.addEventListener('keydown', e => {
+            initAudio(); 
+            if([37, 38, 39, 40].includes(e.keyCode)) e.preventDefault();
+            if(e.keyCode == 37 && d != "RIGHT") nextD = "LEFT";
+            else if(e.keyCode == 38 && d != "DOWN") nextD = "UP";
+            else if(e.keyCode == 39 && d != "LEFT") nextD = "RIGHT";
+            else if(e.keyCode == 40 && d != "UP") nextD = "DOWN";
+        });
+
+        const bindBtn = (id, dir, opp) => {
+            const btn = document.getElementById(id);
+            const handler = (e) => { e.preventDefault(); initAudio(); if(d != opp) nextD = dir; };
+            btn.addEventListener("touchstart", handler, {passive: false});
+            btn.addEventListener("mousedown", handler);
+        };
+        bindBtn("btnUp", "UP", "DOWN"); bindBtn("btnDown", "DOWN", "UP"); 
+        bindBtn("btnLeft", "LEFT", "RIGHT"); bindBtn("btnRight", "RIGHT", "LEFT");
+
+        function shareScore() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Hızlı Yılan Rekorum!',
+                    text: `SnakeZilla'da Speed Ninja modunda ${score} skor yaptım! Sen beni geçebilir misin?`,
+                    url: window.location.href
+                }).catch(console.error);
+            } else alert("Tarayıcınız paylaşma özelliğini desteklemiyor. Skor: " + score);
+        }
+    </script>
+</body>
+</html>
