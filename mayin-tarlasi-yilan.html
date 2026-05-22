@@ -7,24 +7,50 @@
     <meta name="keywords" content="mayın tarlası yılan oyunu, bomba yılan oyunu, zor yılan oyunu, ücretsiz oyunlar">
     <title>Mayın Tarlası Yılan | Minefield - SnakeZilla TR</title>
     <style>
-        /* Danger Zone Theme */
-        body { margin: 0; background: #1a0000; color: #fff; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; touch-action: none; }
-        
-        #hud { position: absolute; top: 15px; background: rgba(255,0,0,0.2); padding: 10px 20px; border: 1px solid #ff4757; border-radius: 10px; color: #ff4757; font-weight: bold; }
-        
-        canvas { background: #000; border: 4px solid #ff4757; box-shadow: 0 0 20px rgba(255,71,87,0.3); }
-        
-        .overlay { position: absolute; background: rgba(0,0,0,0.9); border: 2px solid #ff4757; padding: 40px; text-align: center; }
-        .play-btn { background: #ff4757; color: #fff; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; }
-        
-        .d-btn { width: 50px; height: 50px; background: #222; border: 1px solid #ff4757; color: #ff4757; display: flex; align-items: center; justify-content: center; }
-        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+        body {
+            margin: 0; padding: 0; overflow: hidden; background-color: #120202;
+            background-image: radial-gradient(#2a0808 1px, transparent 1px);
+            background-size: 30px 30px; color: #fff; font-family: 'Segoe UI', sans-serif;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;
+            touch-action: none;
+        }
+        #hud {
+            position: absolute; top: 15px; width: 90vw; max-width: 400px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(42, 8, 8, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(255, 71, 87, 0.3);
+            box-sizing: border-box; z-index: 5; font-weight: bold; font-size: 16px; color: #ff4757;
+        }
+        .hud-item span { color: #fff; font-size: 18px; margin-left: 5px; }
+        canvas { background: rgba(0, 0, 0, 0.7); border-radius: 12px; border: 2px solid #ff4757; box-shadow: 0 0 30px rgba(255, 71, 87, 0.2); display: block; max-width: 95vw; }
+        .overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 2, 2, 0.95); padding: 40px; border-radius: 20px; border: 1px solid #ff4757; box-shadow: 0 0 40px rgba(255, 71, 87, 0.3); text-align: center; z-index: 10; width: 80vw; max-width: 350px; }
+        .overlay h1 { margin-top: 0; color: #ff4757; font-size: 30px; letter-spacing: 2px; text-transform: uppercase; }
+        .play-btn { background: linear-gradient(135deg, #ff4757, #ff6b6b); color: #fff; border: none; padding: 15px 40px; font-size: 22px; font-weight: bold; border-radius: 30px; cursor: pointer; transition: 0.3s; text-transform: uppercase; box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4); margin-top: 10px; }
+        .play-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 25px rgba(255, 71, 87, 0.6); }
+        .secondary-btn { background: transparent; color: #ff4757; border: 2px solid #ff4757; padding: 10px 20px; font-size: 16px; font-weight: bold; border-radius: 20px; cursor: pointer; margin-top: 15px; transition: 0.3s; }
+        .secondary-btn:hover { background: #ff4757; color: #000; }
+        #flashOverlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ff4757; opacity: 0; pointer-events: none; z-index: 20; }
+        .flash-anim { animation: flash 0.4s ease-out; }
+        @keyframes flash { 0% { opacity: 0.6; } 100% { opacity: 0; } }
+        #levelUpText { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 36px; color: #fff; font-weight: bold; text-shadow: 0 0 20px #ff4757; opacity: 0; pointer-events: none; z-index: 21; transition: 0.5s; }
+        .text-pop { animation: popText 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popText { 0% { transform: translate(-50%, -40%) scale(0.5); opacity: 1; } 80% { transform: translate(-50%, -60%) scale(1.2); opacity: 1; } 100% { opacity: 0; } }
+        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; width: 220px; }
+        .d-btn { background: rgba(255, 71, 87, 0.05); border: 1px solid rgba(255, 71, 87, 0.3); color: #ff4757; height: 60px; border-radius: 12px; font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; }
+        .d-btn:active { background: #ff4757; color: #000; transform: scale(0.95); }
     </style>
 </head>
 <body>
 
-    <div id="hud">MAYIN TARLASI | SKOR: <span id="scoreVal">0</span></div>
+    <div id="hud">
+        <div class="hud-item">SKOR:<span id="scoreVal">0</span></div>
+        <div class="hud-item" style="color:#fff;">SEVİYE:<span id="levelVal">1</span></div>
+        <div class="hud-item">REKOR:<span id="highScoreVal">0</span></div>
+    </div>
+
     <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div id="flashOverlay"></div>
+    <div id="levelUpText">MAYINLAR ARTIYOR!</div>
 
     <div class="controls">
         <div></div><div id="btnUp" class="d-btn">▲</div><div></div>
@@ -33,86 +59,125 @@
 
     <div id="startScreen" class="overlay">
         <h1>MAYIN TARLASI</h1>
-        <button class="play-btn" onclick="initGame()">OYUNA BAŞLA</button>
+        <p style="color:#aaa; margin-bottom: 25px;">Kırmızı mayınlara çarpmamaya dikkat edin! Fareleri yedikçe yeni mayınlar eklenir.</p>
+        <button class="play-btn" onclick="initGame()">OYNA</button>
+    </div>
+
+    <div id="gameOverScreen" class="overlay" style="display: none;">
+        <h1 style="color: #ff4757;">BOMBA PATLADI!</h1>
+        <h2 style="margin: 10px 0;">Skor: <span id="finalScore" style="color:#ff4757;">0</span></h2>
+        <button class="play-btn" style="margin-top: 15px;" onclick="document.getElementById('gameOverScreen').style.display='none'; document.getElementById('startScreen').style.display='block';">YENİDEN BAŞLA</button>
+        <br>
+        <button class="secondary-btn" onclick="shareScore()">Skoru Paylaş 📤</button>
     </div>
 
     <script>
-        const canvas = document.getElementById("gameCanvas"); const ctx = canvas.getContext("2d");
-        let snake = [{x: 5, y: 10}], food = {x: 15, y: 10}, mines = [], d = "RIGHT", nextD = "RIGHT";
-        let score = 0, gameActive = false, tickRate = 180, lastTickTime = 0;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx, bgmInterval, isMusicPlaying = false;
+        function initAudio() { if (!audioCtx) audioCtx = new AudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); }
+        function playSFX(type) {
+            if (!audioCtx) return; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); let now = audioCtx.currentTime;
+            if (type === 'eat') { osc.type = 'sine'; osc.frequency.setValueAtTime(450, now); osc.frequency.exponentialRampToValueAtTime(900, now + 0.1); gain.gain.setValueAtTime(0.2, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1); osc.start(now); osc.stop(now + 0.1); }
+            else if (type === 'die') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, now); osc.frequency.linearRampToValueAtTime(10, now + 0.6); gain.gain.setValueAtTime(0.5, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6); osc.start(now); osc.stop(now + 0.6); }
+            else if (type === 'levelUp') { osc.type = 'triangle'; osc.frequency.setValueAtTime(300, now); osc.frequency.setValueAtTime(600, now + 0.15); gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0, now + 0.3); osc.start(now); osc.stop(now + 0.3); }
+        }
+        const notes = [110, 130, 98, 146]; let noteIndex = 0;
+        function startBGM() {
+            if(!audioCtx) return; stopBGM(); isMusicPlaying = true;
+            bgmInterval = setInterval(() => {
+                if(!isMusicPlaying) return; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(notes[noteIndex], audioCtx.currentTime); gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2); osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2); noteIndex = (noteIndex + 1) % notes.length;
+            }, 280);
+        }
+        function stopBGM() { isMusicPlaying = false; if(bgmInterval) clearInterval(bgmInterval); }
 
+        const canvas = document.getElementById("gameCanvas"); const ctx = canvas.getContext("2d"); const gridSize = 20; const tileCount = canvas.width / gridSize;
+        let score = 0, level = 1, highScore = localStorage.getItem("mineSnakeRekor") || 0; document.getElementById("highScoreVal").innerText = highScore;
+        let snake = [], prevSnake = [], food = {x: 0, y: 0}, mines = [], d = "RIGHT", nextD = "RIGHT";
+        let gameActive = false, lastTickTime = 0, reqAnimFrameId, tickRate = 180;
+
+        function lerp(start, end, amt) { return (1 - amt) * start + amt * end; }
         function initGame() {
-            document.getElementById("startScreen").style.display = "none";
-            snake = [{x: 5, y: 10}]; mines = []; score = 0; d = "RIGHT"; gameActive = true;
-            spawnMines(3); spawnFood();
-            lastTickTime = performance.now();
-            requestAnimationFrame(gameLoop);
+            initAudio(); document.getElementById("startScreen").style.display = "none";
+            snake = [{x: 5, y: 10}, {x: 4, y: 10}, {x: 3, y: 10}]; prevSnake = JSON.parse(JSON.stringify(snake));
+            d = "RIGHT"; nextD = "RIGHT"; score = 0; level = 1; tickRate = 180; mines = [];
+            document.getElementById("scoreVal").innerText = score; document.getElementById("levelVal").innerText = level;
+            spawnMine(); spawnFood(); startBGM(); gameActive = true; lastTickTime = performance.now();
+            if(reqAnimFrameId) cancelAnimationFrame(reqAnimFrameId); gameLoop(performance.now());
         }
-
-        function spawnMines(count) {
-            for(let i=0; i<count; i++) {
-                mines.push({x: Math.floor(Math.random()*20), y: Math.floor(Math.random()*20)});
+        function spawnMine() {
+            let valid = false, m = {x:0, y:0};
+            while(!valid) {
+                m = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) }; valid = true;
+                snake.forEach(s => { if(s.x === m.x && s.y === m.y) valid = false; });
+                if(Math.abs(m.x - snake[0].x) < 3 && Math.abs(m.y - snake[0].y) < 3) valid = false;
             }
+            mines.push(m);
         }
-
         function spawnFood() {
-            food = {x: Math.floor(Math.random()*20), y: Math.floor(Math.random()*20)};
-        }
-
-        function gameLoop(currentTime) {
-            if(!gameActive) return;
-            if(currentTime - lastTickTime >= tickRate) {
-                logicTick(); lastTickTime = currentTime;
+            let valid = false;
+            while(!valid) {
+                food = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) }; valid = true;
+                snake.forEach(s => { if(s.x === food.x && s.y === food.y) valid = false; });
+                mines.forEach(m => { if(m.x === food.x && m.y === food.y) valid = false; });
             }
-            draw();
-            requestAnimationFrame(gameLoop);
         }
-
         function logicTick() {
-            d = nextD;
+            d = nextD; prevSnake = JSON.parse(JSON.stringify(snake));
             let head = {x: snake[0].x, y: snake[0].y};
-            if(d=="LEFT") head.x--; if(d=="UP") head.y--; if(d=="RIGHT") head.x++; if(d=="DOWN") head.y++;
-
-            // Hit Wall, Self, OR Mine
-            if(head.x<0 || head.x>=20 || head.y<0 || head.y>=20 || 
-               snake.some(s=>s.x==head.x && s.y==head.y) || 
-               mines.some(m=>m.x==head.x && m.y==head.y)) {
-                gameActive = false; alert("MAYINA BASTINIZ! Skor: " + score); location.reload();
-            }
-
+            if(d == "LEFT") head.x -= 1; if(d == "UP") head.y -= 1; if(d == "RIGHT") head.x += 1; if(d == "DOWN") head.y += 1;
+            if(head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount || snake.some(s => s.x === head.x && s.y === head.y) || mines.some(m => m.x === head.x && m.y === head.y)) { gameOver(); return; }
             snake.unshift(head);
-            if(head.x == food.x && head.y == food.y) {
-                score++; document.getElementById("scoreVal").innerText = score;
-                if(score % 3 === 0) spawnMines(1); // Har 3 puan sonra 1 yeni mayın
+            if(head.x === food.x && head.y === food.y) {
+                score++; playSFX('eat'); document.getElementById("scoreVal").innerText = score;
+                if(score % 3 === 0) {
+                    level++; tickRate = Math.max(80, tickRate - 15); spawnMine();
+                    document.getElementById("levelVal").innerText = level; playSFX('levelUp');
+                    let flash = document.getElementById("flashOverlay"); let txt = document.getElementById("levelUpText");
+                    flash.classList.add("flash-anim"); txt.classList.add("text-pop");
+                    setTimeout(() => { flash.classList.remove("flash-anim"); txt.classList.remove("text-pop"); }, 1000);
+                }
                 spawnFood();
-            } else snake.pop();
+            } else { snake.pop(); }
         }
-
-        function draw() {
-            ctx.fillStyle = "#000"; ctx.fillRect(0,0,400,400);
-            
-            // Draw Mines
-            ctx.fillStyle = "#ff4757";
+        function gameOver() {
+            gameActive = false; stopBGM(); playSFX('die');
+            if(score > highScore) { highScore = score; localStorage.setItem("mineSnakeRekor", highScore); document.getElementById("highScoreVal").innerText = highScore; }
+            document.getElementById("finalScore").innerText = score; document.getElementById("gameOverScreen").style.display = "block";
+        }
+        function gameLoop(currentTime) {
+            if(!gameActive) return; reqAnimFrameId = requestAnimationFrame(gameLoop);
+            let elapsedTime = currentTime - lastTickTime;
+            if(elapsedTime >= tickRate) { logicTick(); lastTickTime = currentTime; elapsedTime = 0; }
+            draw(Math.min(elapsedTime / tickRate, 1));
+        }
+        function draw(progress) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Draw Pulsing Mines
             mines.forEach(m => {
-                ctx.beginPath(); ctx.arc(m.x*20+10, m.y*20+10, 8, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = "#fff"; ctx.font = "12px Arial"; ctx.fillText("X", m.x*20+6, m.y*20+14);
-                ctx.fillStyle = "#ff4757";
+                let mx = m.x * gridSize + gridSize/2, my = m.y * gridSize + gridSize/2;
+                ctx.fillStyle = "#ff4757"; ctx.shadowBlur = 12; ctx.shadowColor = "#ff4757";
+                ctx.beginPath(); ctx.arc(mx, my, 7, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#fff"; ctx.fillRect(mx-2, my-2, 4, 4); ctx.shadowBlur = 0;
             });
-
-            // Draw Snake & Food
-            ctx.fillStyle = "#ff4757"; ctx.fillRect(food.x*20+2, food.y*20+2, 16, 16);
-            snake.forEach(s => ctx.fillRect(s.x*20+2, s.y*20+2, 16, 16));
+            // Draw Food (Mouse)
+            let fx = food.x * gridSize + gridSize/2, fy = food.y * gridSize + gridSize/2;
+            ctx.fillStyle = "#ff9f43"; ctx.beginPath(); ctx.ellipse(fx, fy, 8, 6, 0, 0, Math.PI*2); ctx.fill();
+            // Draw Snake
+            for(let i = 0; i < snake.length; i++) {
+                let s = snake[i], p = prevSnake[i] || s;
+                let drawX = lerp(p.x, s.x, progress) * gridSize, drawY = lerp(p.y, s.y, progress) * gridSize;
+                ctx.fillStyle = i === 0 ? "#ff6b6b" : "#ff4757";
+                if(i===0) { ctx.shadowBlur = 15; ctx.shadowColor = "#ff6b6b"; }
+                ctx.beginPath(); ctx.arc(drawX + gridSize/2, drawY + gridSize/2, gridSize/2.2, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
+            }
         }
-
-        window.addEventListener('keydown', e => {
-            if(e.keyCode==37 && d!="RIGHT") nextD="LEFT";
-            else if(e.keyCode==38 && d!="DOWN") nextD="UP";
-            else if(e.keyCode==39 && d!="LEFT") nextD="RIGHT";
-            else if(e.keyCode==40 && d!="UP") nextD="DOWN";
-        });
-        
-        const bindBtn = (id, dir) => document.getElementById(id).addEventListener("touchstart", (e)=>{e.preventDefault(); nextD=dir;});
-        bindBtn("btnUp", "UP"); bindBtn("btnDown", "DOWN"); bindBtn("btnLeft", "LEFT"); bindBtn("btnRight", "RIGHT");
+        window.addEventListener('keydown', e => { initAudio(); if([37, 38, 39, 40].includes(e.keyCode)) e.preventDefault(); if(e.keyCode == 37 && d != "RIGHT") nextD = "LEFT"; else if(e.keyCode == 38 && d != "DOWN") nextD = "UP"; else if(e.keyCode == 39 && d != "LEFT") nextD = "RIGHT"; else if(e.keyCode == 40 && d != "UP") nextD = "DOWN"; });
+        const bindBtn = (id, dir, opp) => { const btn = document.getElementById(id); const handler = (e) => { e.preventDefault(); initAudio(); if(d != opp) nextD = dir; }; btn.addEventListener("touchstart", handler, {passive: false}); btn.addEventListener("mousedown", handler); };
+        bindBtn("btnUp", "UP", "DOWN"); bindBtn("btnDown", "DOWN", "UP"); bindBtn("btnLeft", "LEFT", "RIGHT"); bindBtn("btnRight", "RIGHT", "LEFT");
+        function shareScore() { if (navigator.share) { navigator.share({ title: 'Mayın Tarlası Rekorum!', text: `SnakeZilla Mayın Tarlası modunda ${score} skor yaptım! Bombaları aşıp beni geçebilir misin?`, url: window.location.href }).catch(console.error); } else alert("Skorunuz: " + score); }
     </script>
 </body>
 </html>
