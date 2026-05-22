@@ -3,102 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Hayalet Yılan Oyunu oyna. Görünmez kuyruklu yılan ile heyecan verici ve zorlu bir deneyim. Ücretsiz ve akıcı yılan oyunu.">
-    <meta name="keywords" content="hayalet yılan oyunu, ghost mode yılan, görünmez yılan oyunu, yılan oyunları, zor yılan oyunu">
-    <title>Hayalet Modu | Ghost Snake - SnakeZilla TR</title>
+    
+    <title>Hayalet Yılan Oyunu Oyna | Görünmez Kuyruk Hardcore Mod</title>
+    <meta name="description" content="Kuyruğun arkaya doğru tamamen şeffaflaştığı hayalet yılan oyunu! Kendi gövdenizin yerini tahmin ederek en yüksek skoru yapmaya çalışın. Ücretsiz oyna.">
+    <meta name="keywords" content="hayalet yılan oyunu, görünmez yılan oyunu, ghost mode snake, hardcore yılan oyna, zor yılan oyunları">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="Turkish">
+    <link rel="canonical" href="https://yilan-oyunlari.github.io/ghost-yilan-oyunu.html">
+
+    <meta property="og:title" content="Hayalet Yılan Oyunu | Hardcore Görünmez Mod">
+    <meta property="og:description" content="Kuyruğunun nerede olduğunu tahmin edebilir misin? Hayalet yılan oyununda sınırlarını zorla!">
+    <meta property="og:url" content="https://yilan-oyunlari.github.io/ghost-yilan-oyunu.html">
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Hayalet Yılan Oyunu">
+    <meta name="twitter:description" content="Görünmez kuyruklu hardcore yılan oyunu deneyimi!">
+
     <style>
-        body {
-            margin: 0; padding: 0; overflow: hidden; background-color: #03030f;
-            background-image: radial-gradient(rgba(112, 161, 255, 0.04) 1px, transparent 1px);
-            background-size: 30px 30px; color: #fff; font-family: 'Segoe UI', sans-serif;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;
-            touch-action: none;
+        /* Ghost Dimension Theme */
+        :root {
+            --bg: #03030f;
+            --primary: #70a1ff; /* Ghost Blue */
+            --primary-dark: #4784ff;
+            --card: rgba(112, 161, 255, 0.05);
+            --text: #fff;
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
+        body {
+            margin: 0; padding: 0; background-color: var(--bg);
+            background-image: radial-gradient(rgba(112, 161, 255, 0.04) 1px, transparent 1px);
+            background-size: 30px 30px; color: var(--text); font-family: var(--font-main); overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 5%; background: rgba(0,0,0,0.8); border-bottom: 1px solid rgba(112, 161, 255, 0.2); }
+        .back-link { color: var(--primary); text-decoration: none; font-weight: bold; font-size: 1.1rem; transition: 0.3s; }
+        .back-link:hover { text-shadow: 0 0 10px var(--primary); }
+        .logo-text { font-weight: bold; color: #fff; font-size: 1.2rem; }
+
+        /* Game Section */
+        .game-wrapper { display: flex; flex-direction: column; align-items: center; padding: 40px 10px; position: relative; }
+        
         #hud {
-            position: absolute; top: 15px; width: 90vw; max-width: 400px;
-            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; max-width: 400px; display: flex; justify-content: space-between; align-items: center;
             background: rgba(5, 5, 25, 0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(112, 161, 255, 0.3);
-            box-sizing: border-box; z-index: 5; font-weight: bold; font-size: 16px; color: #70a1ff;
+            box-sizing: border-box; font-weight: bold; font-size: 16px; color: var(--primary); margin-bottom: 15px;
         }
         .hud-item span { color: #fff; font-size: 18px; margin-left: 5px; }
-        canvas { background: rgba(0, 0, 0, 0.6); border-radius: 12px; border: 2px solid #70a1ff; box-shadow: 0 0 35px rgba(112, 161, 255, 0.25); display: block; max-width: 95vw; }
-        .overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(3, 3, 15, 0.95); padding: 40px; border-radius: 20px; border: 1px solid #70a1ff; box-shadow: 0 0 40px rgba(112, 161, 255, 0.3); text-align: center; z-index: 10; width: 80vw; max-width: 350px; }
-        .overlay h1 { margin-top: 0; color: #70a1ff; font-size: 30px; letter-spacing: 2px; text-transform: uppercase; }
-        .play-btn { background: linear-gradient(135deg, #70a1ff, #4784ff); color: #fff; border: none; padding: 15px 40px; font-size: 22px; font-weight: bold; border-radius: 30px; cursor: pointer; transition: 0.3s; text-transform: uppercase; box-shadow: 0 5px 15px rgba(112, 161, 255, 0.4); margin-top: 10px; }
+
+        canvas {
+            background: rgba(0, 0, 0, 0.6); border-radius: 12px; border: 2px solid var(--primary);
+            box-shadow: 0 0 35px rgba(112, 161, 255, 0.25); display: block; max-width: 95vw;
+        }
+
+        /* Overlays */
+        .overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(3, 3, 15, 0.95); padding: 40px; border-radius: 20px;
+            border: 1px solid var(--primary); box-shadow: 0 0 40px rgba(112, 161, 255, 0.3);
+            text-align: center; z-index: 10; width: 80vw; max-width: 350px;
+        }
+        .overlay h1 { margin-top: 0; color: var(--primary); font-size: 30px; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 0 10px rgba(112,161,255,0.5); }
+        
+        .play-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff;
+            border: none; padding: 15px 40px; font-size: 22px; font-weight: bold; border-radius: 30px;
+            cursor: pointer; transition: all 0.3s; text-transform: uppercase; margin-top: 10px; box-shadow: 0 5px 15px rgba(112, 161, 255, 0.4);
+        }
         .play-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 25px rgba(112, 161, 255, 0.6); }
-        .secondary-btn { background: transparent; color: #70a1ff; border: 2px solid #70a1ff; padding: 10px 20px; font-size: 16px; font-weight: bold; border-radius: 20px; cursor: pointer; margin-top: 15px; transition: 0.3s; }
-        .secondary-btn:hover { background: #70a1ff; color: #000; }
-        #flashOverlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; opacity: 0; pointer-events: none; z-index: 20; }
+
+        /* Level Up Flash Animation */
+        #flashOverlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; opacity: 0; pointer-events: none; z-index: 20; border-radius: 12px; }
         .flash-anim { animation: flash 0.4s ease-out; }
         @keyframes flash { 0% { opacity: 0.4; } 100% { opacity: 0; } }
-        #levelUpText { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 36px; color: #fff; font-weight: bold; text-shadow: 0 0 20px #70a1ff; opacity: 0; pointer-events: none; z-index: 21; transition: 0.5s; }
+        
+        #levelUpText {
+            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 36px; color: #fff; font-weight: bold; text-shadow: 0 0 20px var(--primary);
+            opacity: 0; pointer-events: none; z-index: 21; transition: 0.5s; width: 100%; text-align: center;
+        }
         .text-pop { animation: popText 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes popText { 0% { transform: translate(-50%, -40%) scale(0.5); opacity: 1; } 80% { transform: translate(-50%, -60%) scale(1.2); opacity: 1; } 100% { opacity: 0; } }
+
+        /* Controls */
         .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; width: 220px; }
-        .d-btn { background: rgba(112, 161, 255, 0.05); border: 1px solid rgba(112, 161, 255, 0.3); color: #70a1ff; height: 60px; border-radius: 12px; font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; }
-        .d-btn:active { background: #70a1ff; color: #000; transform: scale(0.95); }
+        .d-btn { background: rgba(112, 161, 255, 0.05); border: 1px solid rgba(112, 161, 255, 0.3); color: var(--primary); height: 60px; border-radius: 12px; font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; }
+        .d-btn:active { background: var(--primary); color: #000; transform: scale(0.95); }
+
+        /* SEO Content & Internal Links */
+        .seo-container { padding: 0 5%; margin-bottom: 40px; }
+        .seo-content { max-width: 800px; margin: 0 auto; padding: 30px; background: rgba(255,255,255,0.02); border-radius: 15px; line-height: 1.7; border: 1px solid rgba(112, 161, 255, 0.1); }
+        .seo-content h2 { color: var(--primary); border-bottom: 1px solid rgba(112, 161, 255, 0.2); padding-bottom: 10px; margin-top: 0; }
+        .seo-content h3 { color: #fff; margin-top: 25px; }
+        
+        .link-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+        .link-card { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; border: 1px solid rgba(112, 161, 255, 0.2); text-align: center; text-decoration: none; color: #fff; transition: 0.3s; }
+        .link-card:hover { background: var(--primary); color: #000; transform: translateY(-5px); box-shadow: 0 5px 15px rgba(112, 161, 255, 0.3); }
+        .link-card span { display: block; font-size: 0.85rem; opacity: 0.8; margin-top: 5px; }
+
+        footer { text-align: center; padding: 25px; color: #777; border-top: 1px solid rgba(255,255,255,0.05); background: #000; }
+        footer a { color: var(--primary); text-decoration: none; }
     </style>
 </head>
 <body>
 
-    <div id="hud">
-        <div class="hud-item">SKOR:<span id="scoreVal">0</span></div>
-        <div class="hud-item" style="color:#fff;">BOYUT:<span id="levelVal">1</span></div>
-        <div class="hud-item">REKOR:<span id="highScoreVal">0</span></div>
+    <nav>
+        <a href="index.html" class="back-link">⬅ Ana Sayfa'ya Dön</a>
+        <div class="logo-text">SnakeZilla TR</div>
+    </nav>
+
+    <div class="game-wrapper">
+        
+        <div id="hud">
+            <div class="hud-item">SKOR:<span id="scoreVal">0</span></div>
+            <div class="hud-item" style="color:#fff;">BOYUT:<span id="levelVal">1</span></div>
+            <div class="hud-item">REKOR:<span id="highScoreVal">0</span></div>
+        </div>
+
+        <div style="position: relative;">
+            <canvas id="gameCanvas" width="400" height="400"></canvas>
+            
+            <div id="flashOverlay"></div>
+            <div id="levelUpText">GÖRÜNMEZLİK ARTIYOR!</div>
+
+            <div id="startScreen" class="overlay">
+                <h1>HAYALET MODU</h1>
+                <p style="color:#aaa; margin-bottom: 25px;">Yılanın gövdesi arkaya doğru şeffaflaşır. Kuyruğunuzun nerede olduğunu tahmin etmek zorundasınız!</p>
+                <button class="play-btn" onclick="initGame()">OYNA</button>
+            </div>
+
+            <div id="gameOverScreen" class="overlay" style="display: none;">
+                <h1 style="color: #70a1ff;">RUHUNUZ KAYBOLDU</h1>
+                <h2 style="margin: 10px 0;">Skor: <span id="finalScore" style="color:var(--primary);">0</span></h2>
+                <button class="play-btn" style="margin-top: 15px;" onclick="location.reload()">YENİDEN BAŞLA</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div></div><div id="btnUp" class="d-btn">▲</div><div></div>
+            <div id="btnLeft" class="d-btn">◄</div><div id="btnDown" class="d-btn">▼</div><div id="btnRight" class="d-btn">►</div>
+        </div>
+
     </div>
 
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
-    <div id="flashOverlay"></div>
-    <div id="levelUpText">GÖRÜNMEZLİK ARTIYOR!</div>
-
-    <div class="controls">
-        <div></div><div id="btnUp" class="d-btn">▲</div><div></div>
-        <div id="btnLeft" class="d-btn">◄</div><div id="btnDown" class="d-btn">▼</div><div id="btnRight" class="d-btn">►</div>
+    <div class="seo-container">
+        <div class="seo-content">
+            <h2>Hayalet Yılan Oyunu Mücadelesi</h2>
+            <p>Yalnızca en deneyimli ve profesyonel oyuncular için tasarlanmış hardcore bir mod: <strong>Hayalet Yılan Oyunu</strong> (Ghost Mode). Bu modda yılanınız büyüdükçe, gövdesinin ve kuyruğunun arkada kalan kısımları tamamen görünmez (şeffaf) hale gelir.</p>
+            
+            <h3>Görünmez Gövdenizi Takip Edin</h3>
+            <p>Kuyruğunuz ekranda görünmese de fiziksel olarak hala oradadır ve çarpışmalara açıktır. Bu yüzden kendi gövdenize çarpmamak için son birkaç saniyede izlediğiniz rotayı zihninizde canlı tutmalı, dönüşlerinizi ezberleyerek hareket etmelisiniz. Bu mod, sadece refleksleri değil aynı zamanda kısa süreli hafızayı da test eder!</p>
+            
+            <div style="margin-top: 40px;">
+                <h3 style="color: var(--primary);">Diğer Oyun Modlarını Keşfedin</h3>
+                <p>Hayalet modunun sınırlarını zorladıysanız, bu benzersiz oyunlara da kesinlikle şans vermelisiniz:</p>
+                <div class="link-grid">
+                    <a href="index.html" class="link-card">
+                        <strong>Ana Sayfa</strong>
+                        <span>Tüm Oyun Merkezi</span>
+                    </a>
+                    <a href="portal-yilan-oyunu.html" class="link-card">
+                        <strong>Portal Warp</strong>
+                        <span>Boyut Değiştir</span>
+                    </a>
+                    <a href="klasik-yilan-oyunu.html" class="link-card">
+                        <strong>Klasik Yılan</strong>
+                        <span>Standart ve Akıcı</span>
+                    </a>
+                    <a href="hizli-yilan-oyunu.html" class="link-card">
+                        <strong>Hızlı Ninja</strong>
+                        <span>Maksimum Adrenalin</span>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div id="startScreen" class="overlay">
-        <h1>HAYALET MODU</h1>
-        <p style="color:#aaa; margin-bottom: 25px;">Yılanın gövdesi arkaya doğru şeffaflaşır. Kuyruğunuzun nerede olduğunu tahmin etmek zorundasınız!</p>
-        <button class="play-btn" onclick="initGame()">OYNA</button>
-    </div>
-
-    <div id="gameOverScreen" class="overlay" style="display: none;">
-        <h1 style="color: #70a1ff;">RUHUNUZ KAYBOLDU</h1>
-        <h2 style="margin: 10px 0;">Skor: <span id="finalScore" style="color:#70a1ff;">0</span></h2>
-        <button class="play-btn" style="margin-top: 15px;" onclick="document.getElementById('gameOverScreen').style.display='none'; document.getElementById('startScreen').style.display='block';">YENİDEN BAŞLA</button>
-        <br>
-        <button class="secondary-btn" onclick="shareScore()">Skoru Paylaş 📤</button>
-    </div>
+    <footer>
+        <p>© 2026 SnakeZilla TR. <a href="index.html">Tüm Yılan Oyunları - Ücretsiz Oyna</a></p>
+    </footer>
 
     <script>
+        // Web Audio Synth Engine (Ethereal / Spooky Ambient)
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx, bgmInterval, isMusicPlaying = false;
-        function initAudio() { if (!audioCtx) audioCtx = new AudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); }
-        function playSFX(type) {
-            if (!audioCtx) return; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); let now = audioCtx.currentTime;
-            if (type === 'eat') { osc.type = 'sine'; osc.frequency.setValueAtTime(587.33, now); osc.frequency.exponentialRampToValueAtTime(1174.66, now + 0.12); gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12); osc.start(now); osc.stop(now + 0.12); }
-            else if (type === 'die') { osc.type = 'triangle'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(40, now + 0.6); gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6); osc.start(now); osc.stop(now + 0.6); }
-            else if (type === 'levelUp') { osc.type = 'sine'; osc.frequency.setValueAtTime(349.23, now); osc.frequency.setValueAtTime(698.46, now + 0.1); gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0, now + 0.4); osc.start(now); osc.stop(now + 0.4); }
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
         }
+
+        function playSFX(type) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination); let now = audioCtx.currentTime;
+
+            if (type === 'eat') {
+                osc.type = 'sine'; osc.frequency.setValueAtTime(587.33, now); osc.frequency.exponentialRampToValueAtTime(1174.66, now + 0.12);
+                gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                osc.start(now); osc.stop(now + 0.12);
+            } else if (type === 'die') {
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(40, now + 0.6);
+                gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                osc.start(now); osc.stop(now + 0.6);
+            } else if (type === 'levelUp') {
+                osc.type = 'sine'; osc.frequency.setValueAtTime(349.23, now); osc.frequency.setValueAtTime(698.46, now + 0.1);
+                gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0, now + 0.4);
+                osc.start(now); osc.stop(now + 0.4);
+            }
+        }
+
         const notes = [220, 261, 329, 392]; let noteIndex = 0;
         function startBGM() {
             if(!audioCtx) return; stopBGM(); isMusicPlaying = true;
             bgmInterval = setInterval(() => {
-                if(!isMusicPlaying) return; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.type = 'sine';
-                osc.frequency.setValueAtTime(notes[noteIndex], audioCtx.currentTime); gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4); osc.connect(gain); gain.connect(audioCtx.destination);
+                if(!isMusicPlaying) return;
+                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                osc.type = 'sine'; osc.frequency.setValueAtTime(notes[noteIndex], audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+                osc.connect(gain); gain.connect(audioCtx.destination);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.4); noteIndex = (noteIndex + 1) % notes.length;
             }, 450); // Ethereal slow rhythm
         }
         function stopBGM() { isMusicPlaying = false; if(bgmInterval) clearInterval(bgmInterval); }
 
-        const canvas = document.getElementById("gameCanvas"); const ctx = canvas.getContext("2d"); const gridSize = 20; const tileCount = canvas.width / gridSize;
-        let score = 0, level = 1, highScore = localStorage.getItem("ghostSnakeRekor") || 0; document.getElementById("highScoreVal").innerText = highScore;
+        // Game State Variables
+        const canvas = document.getElementById("gameCanvas"); const ctx = canvas.getContext("2d");
+        const gridSize = 20; const tileCount = canvas.width / gridSize;
+        
+        let score = 0, level = 1, highScore = localStorage.getItem("ghostSnakeRekor") || 0;
+        document.getElementById("highScoreVal").innerText = highScore;
+        
         let snake = [], prevSnake = [], food = {x: 0, y: 0}, d = "RIGHT", nextD = "RIGHT";
         let gameActive = false, lastTickTime = 0, reqAnimFrameId, tickRate = 180;
 
         function lerp(start, end, amt) { return (1 - amt) * start + amt * end; }
+
         function initGame() {
             initAudio(); document.getElementById("startScreen").style.display = "none";
             snake = [{x: 5, y: 10}, {x: 4, y: 10}, {x: 3, y: 10}]; prevSnake = JSON.parse(JSON.stringify(snake));
@@ -107,6 +250,7 @@
             spawnFood(); startBGM(); gameActive = true; lastTickTime = performance.now();
             if(reqAnimFrameId) cancelAnimationFrame(reqAnimFrameId); gameLoop(performance.now());
         }
+
         function spawnFood() {
             let valid = false;
             while(!valid) {
@@ -114,12 +258,18 @@
                 snake.forEach(s => { if(s.x === food.x && s.y === food.y) valid = false; });
             }
         }
+
         function logicTick() {
             d = nextD; prevSnake = JSON.parse(JSON.stringify(snake));
             let head = {x: snake[0].x, y: snake[0].y};
-            if(d == "LEFT") head.x -= 1; if(d == "UP") head.y -= 1; if(d == "RIGHT") head.x += 1; if(d == "DOWN") head.y -= 1;
-            if(head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount || snake.some(s => s.x === head.x && s.y === head.y)) { gameOver(); return; }
+            if(d == "LEFT") head.x -= 1; if(d == "UP") head.y -= 1; if(d == "RIGHT") head.x += 1; if(d == "DOWN") head.y += 1;
+
+            if(head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount || snake.some(s => s.x === head.x && s.y === head.y)) {
+                gameOver(); return;
+            }
+
             snake.unshift(head);
+
             if(head.x === food.x && head.y === food.y) {
                 score++; playSFX('eat'); document.getElementById("scoreVal").innerText = score;
                 if(score % 5 === 0) {
@@ -132,40 +282,47 @@
                 spawnFood();
             } else { snake.pop(); }
         }
+
         function gameOver() {
             gameActive = false; stopBGM(); playSFX('die');
             if(score > highScore) { highScore = score; localStorage.setItem("ghostSnakeRekor", highScore); document.getElementById("highScoreVal").innerText = highScore; }
             document.getElementById("finalScore").innerText = score; document.getElementById("gameOverScreen").style.display = "block";
         }
+
         function gameLoop(currentTime) {
             if(!gameActive) return; reqAnimFrameId = requestAnimationFrame(gameLoop);
             let elapsedTime = currentTime - lastTickTime;
             if(elapsedTime >= tickRate) { logicTick(); lastTickTime = currentTime; elapsedTime = 0; }
             draw(Math.min(elapsedTime / tickRate, 1));
         }
+
         function draw(progress) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+
             // Draw Ghostly Food (Spirit Orb)
             let fx = food.x * gridSize + gridSize/2, fy = food.y * gridSize + gridSize/2;
             ctx.fillStyle = "rgba(112, 161, 255, 0.9)"; ctx.shadowBlur = 15; ctx.shadowColor = "#70a1ff";
             ctx.beginPath(); ctx.arc(fx, fy, 6, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
+
             // Draw Lerped Ghost Snake with Alpha Decay
             for(let i = 0; i < snake.length; i++) {
-                let s = snake[i], p = prevSnake[i] || s;
+                let s = snake[i], p = prevSnake[i] || s; 
                 let drawX = lerp(p.x, s.x, progress) * gridSize, drawY = lerp(p.y, s.y, progress) * gridSize;
-                // Alpha calculation based on node index
+                
+                // GHOST MECHANIC: Alpha calculation based on node index
                 let alpha = Math.max(0.08, 1 - (i / snake.length));
                 ctx.globalAlpha = alpha;
+                
                 ctx.fillStyle = i === 0 ? "#ffffff" : "#70a1ff";
                 if(i===0) { ctx.shadowBlur = 20; ctx.shadowColor = "#70a1ff"; }
                 ctx.beginPath(); ctx.arc(drawX + gridSize/2, drawY + gridSize/2, gridSize/2.2, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
-                ctx.globalAlpha = 1.0; // Reset
+                ctx.globalAlpha = 1.0; // Reset alpha for next frame
             }
         }
+
         window.addEventListener('keydown', e => { initAudio(); if([37, 38, 39, 40].includes(e.keyCode)) e.preventDefault(); if(e.keyCode == 37 && d != "RIGHT") nextD = "LEFT"; else if(e.keyCode == 38 && d != "DOWN") nextD = "UP"; else if(e.keyCode == 39 && d != "LEFT") nextD = "RIGHT"; else if(e.keyCode == 40 && d != "UP") nextD = "DOWN"; });
         const bindBtn = (id, dir, opp) => { const btn = document.getElementById(id); const handler = (e) => { e.preventDefault(); initAudio(); if(d != opp) nextD = dir; }; btn.addEventListener("touchstart", handler, {passive: false}); btn.addEventListener("mousedown", handler); };
         bindBtn("btnUp", "UP", "DOWN"); bindBtn("btnDown", "DOWN", "UP"); bindBtn("btnLeft", "LEFT", "RIGHT"); bindBtn("btnRight", "RIGHT", "LEFT");
-        function shareScore() { if (navigator.share) { navigator.share({ title: 'Hayalet Modu Başarısı!', text: `SnakeZilla'nın görünmez dünyasında ${score} skor yapmayı başardım! Beni yakalayabilir misin?`, url: window.location.href }).catch(console.error); } else alert("Skorunuz: " + score); }
     </script>
 </body>
 </html>
