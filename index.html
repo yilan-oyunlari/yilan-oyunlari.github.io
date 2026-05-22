@@ -1,942 +1,863 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="SnakeZilla TR - Türkiye'nin premium ücretsiz oyun portalı. Klasik, Nokia, modern ve rekabetçi yılan oyunlarını şimdi oyna." />
-    <meta name="keywords" content="yılan oyunu, snake game, online oyun portalı, ücretsiz arcade oyunları, nokia yılan oyunu" />
-    <title>SnakeZilla TR | Premium Snake Games Portal</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #10ffb2;
-            --secondary: #0d1117;
-            --card: rgba(255,255,255,0.06);
-            --border: rgba(255,255,255,0.12);
-            --text: #f5f5f5;
-            --muted: #9ca3af;
-        }
-
-        body {
-            background: radial-gradient(circle at top, #12202f 0%, #050505 45%, #000 100%);
-            color: var(--text);
-            font-family: 'Poppins', sans-serif;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            background:
-                radial-gradient(circle at 20% 20%, rgba(16,255,178,0.12), transparent 25%),
-                radial-gradient(circle at 80% 30%, rgba(0,180,255,0.12), transparent 25%),
-                radial-gradient(circle at 50% 80%, rgba(140,0,255,0.10), transparent 30%);
-            z-index: -2;
-            animation: pulseBg 12s ease-in-out infinite alternate;
-        }
-
-        body::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
-            background-size: 35px 35px;
-            opacity: 0.25;
-            z-index: -1;
-            animation: moveGrid 20s linear infinite;
-        }
-
-        @keyframes pulseBg {
-            0% {
-                transform: scale(1);
-                filter: blur(0px);
-            }
-            100% {
-                transform: scale(1.05);
-                filter: blur(10px);
-            }
-        }
-
-        @keyframes moveGrid {
-            0% {
-                transform: translateY(0px);
-            }
-            100% {
-                transform: translateY(35px);
-            }
-        }
-            100% { transform: translateY(40px); }
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .container {
-            width: 92%;
-            max-width: 1300px;
-            margin: auto;
-        }
-
-        /* NAVBAR */
-        nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px 0;
-        }
-
-        .logo {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary);
-            letter-spacing: 2px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: #d1d5db;
-            transition: 0.3s;
-            font-size: 0.95rem;
-        }
-
-        .nav-links a:hover {
-            color: var(--primary);
-        }
-
-        .profile-btn {
-            padding: 12px 22px;
-            border-radius: 40px;
-            background: linear-gradient(90deg, #10ffb2, #00b4ff);
-            color: #000;
-            font-weight: 600;
-            box-shadow: 0 0 20px rgba(16,255,178,0.3);
-        }
-
-        /* HERO SECTION */
-        .hero {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            align-items: center;
-            gap: 50px;
-            padding: 20px 0 50px;
-        }
-
-        .hero-text h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 4rem;
-            line-height: 1.1;
-            margin-bottom: 25px;
-        }
-
-        .hero-text h1 span {
-            color: var(--primary);
-        }
-
-        .hero-text p {
-            color: var(--muted);
-            line-height: 1.8;
-            margin-bottom: 35px;
-            max-width: 600px;
-        }
-
-        .hero-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 18px;
-        }
-
-        .cta-btn {
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .primary-btn {
-            background: linear-gradient(90deg, #10ffb2, #00d4ff);
-            color: #000;
-            box-shadow: 0 0 30px rgba(16,255,178,0.4);
-        }
-
-        .primary-btn:hover {
-            transform: translateY(-4px) scale(1.02);
-        }
-
-        .secondary-btn {
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(8px);
-        }
-
-        .secondary-btn:hover {
-            border-color: var(--primary);
-        }
-
-        .hero-visual {
-            position: relative;
-        }
-
-        .preview-card {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 30px;
-            overflow: hidden;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-        }
-
-        .preview-card img {
-            width: 100%;
-            display: block;
-            height: 420px;
-            object-fit: cover;
-        }
-
-        .floating-badge {
-            position: absolute;
-            right: -10px;
-            top: 20px;
-            background: #111827;
-            border: 1px solid rgba(255,255,255,0.12);
-            padding: 14px 20px;
-            border-radius: 16px;
-            box-shadow: 0 0 25px rgba(16,255,178,0.2);
-        }
-
-        .floating-badge span {
-            color: var(--primary);
-            font-weight: 700;
-            display: block;
-            font-size: 1.2rem;
-        }
-
-        /* STATS */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px;
-            margin-bottom: 90px;
-        }
-
-        .stat-box {
-            background: var(--card);
-            border: 1px solid var(--border);
-            padding: 30px;
-            border-radius: 22px;
-            backdrop-filter: blur(10px);
-        }
-
-        .stat-box h3 {
-            font-size: 2rem;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        .stat-box p {
-            color: var(--muted);
-        }
-
-        /* SECTION HEADINGS */
-        .section-title {
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: 2.4rem;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .section-desc {
-            text-align: center;
-            color: var(--muted);
-            max-width: 700px;
-            margin: 0 auto 50px;
-        }
-
-        /* GAME GRID */
-        .game-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 25px;
-            margin-bottom: 100px;
-        }
-
-        .game-card {
-            position: relative;
-            overflow: hidden;
-            border-radius: 26px;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(14px);
-            transition: 0.4s ease;
-        }
-
-        .game-card::before {
-            content:'';
-            position:absolute;
-            inset:0;
-            background:linear-gradient(180deg, transparent, rgba(0,0,0,0.7));
-            opacity:0;
-            transition:0.4s;
-        }
-
-        .game-card:hover::before {
-            opacity:1;
-        }
-
-        .game-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(16,255,178,0.5);
-            box-shadow: 0 0 35px rgba(16,255,178,0.15);
-        }
-
-        .game-thumb {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-        }
-
-        .game-content {
-            padding: 22px;
-        }
-
-        .tag {
-            display: inline-block;
-            padding: 6px 12px;
-            background: rgba(16,255,178,0.15);
-            color: var(--primary);
-            border-radius: 40px;
-            font-size: 0.75rem;
-            margin-bottom: 16px;
-        }
-
-        .game-content h3 {
-            margin-bottom: 10px;
-            font-size: 1.3rem;
-        }
-
-        .game-content p {
-            color: var(--muted);
-            line-height: 1.7;
-            font-size: 0.92rem;
-            margin-bottom: 18px;
-        }
-
-        .card-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .rating {
-            color: #ffd700;
-            font-size: 0.95rem;
-        }
-
-        .play-btn {
-            transition:0.3s;
-        }
-
-        .play-btn:hover {
-            transform:scale(1.05);
-            box-shadow:0 0 20px rgba(16,255,178,0.35);
-        }
-
-        .play-btn {
-            padding: 10px 18px;
-            border-radius: 14px;
-            background: linear-gradient(90deg, #10ffb2, #00d4ff);
-            color: #000;
-            font-weight: 600;
-        }
-
-        /* LEADERBOARD */
-        .leaderboard {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 30px;
-            margin-bottom: 100px;
-        }
-
-        .board,
-        .welcome-strip {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 28px;
-            padding: 30px;
-            backdrop-filter: blur(12px);
-        }
-
-        .board h3,
-        .welcome-strip h3 {
-            margin-bottom: 25px;
-            font-size: 1.5rem;
-        }
-
-        .player {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-        }
-
-        .player:last-child {
-            border-bottom: none;
-        }
-
-        .player-name {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .rank {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: rgba(16,255,178,0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        .points {
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        .welcome-box {
-            background: linear-gradient(135deg, rgba(16,255,178,0.15), rgba(0,180,255,0.12));
-            border-radius: 20px;
-            padding: 25px;
-            margin-top: 20px;
-        }
-
-        .welcome-box p {
-            color: #d1d5db;
-            margin-top: 10px;
-            line-height: 1.7;
-        }
-
-        /* FEATURES */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 25px;
-            margin-bottom: 100px;
-        }
-
-        .feature-card {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 22px;
-            padding: 30px;
-            transition: 0.3s;
-        }
-
-        .feature-card:hover {
-            border-color: rgba(16,255,178,0.4);
-            transform: translateY(-5px);
-        }
-
-        .feature-icon {
-            font-size: 2rem;
-            margin-bottom: 18px;
-        }
-
-        .feature-card h4 {
-            margin-bottom: 12px;
-        }
-
-        .feature-card p {
-            color: var(--muted);
-            line-height: 1.7;
-            font-size: 0.92rem;
-        }
-
-        /* FOOTER */
-        footer {
-            border-top: 1px solid rgba(255,255,255,0.08);
-            padding: 60px 0 30px;
-            background: rgba(0,0,0,0.35);
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .footer-col h4 {
-            margin-bottom: 18px;
-            color: var(--primary);
-        }
-
-        .footer-col a {
-            display: block;
-            color: #cbd5e1;
-            margin-bottom: 10px;
-            transition: 0.3s;
-        }
-
-        .footer-col a:hover {
-            color: var(--primary);
-        }
-
-        .footer-bottom {
-            text-align: center;
-            color: #6b7280;
-            border-top: 1px solid rgba(255,255,255,0.08);
-            padding-top: 20px;
-            font-size: 0.9rem;
-        }
-
-        @media(max-width: 900px) {
-            .leaderboard {
-                grid-template-columns: 1fr;
-            }
-
-            .hero-text h1 {
-                font-size: 3rem;
-            }
-
-            nav {
-                flex-direction: column;
-                gap: 20px;
-            }
-        }
-
-        @media(max-width: 600px) {
-            .hero {
-                padding-top: 40px;
-            }
-
-            .hero-text h1 {
-                font-size: 2.4rem;
-            }
-
-            .nav-links {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SnakeZilla TR | Premium Snake Games Portal</title>
+
+<meta name="description" content="Türkiye'nin premium ücretsiz yılan oyunları portalı. Nokia, klasik, modern ve rekabetçi snake oyunlarını ücretsiz oyna.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --primary:#10ffb2;
+    --dark:#050505;
+    --card:rgba(255,255,255,0.06);
+    --border:rgba(255,255,255,0.12);
+    --text:#ffffff;
+    --muted:#9ca3af;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:
+    radial-gradient(circle at top,#12202f 0%,#050505 45%,#000 100%);
+    color:var(--text);
+    font-family:'Poppins',sans-serif;
+    overflow-x:hidden;
+}
+
+/* Animated Background */
+
+body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background:
+    radial-gradient(circle at 20% 20%, rgba(16,255,178,0.12), transparent 25%),
+    radial-gradient(circle at 80% 30%, rgba(0,180,255,0.12), transparent 25%),
+    radial-gradient(circle at 50% 80%, rgba(140,0,255,0.10), transparent 30%);
+    z-index:-2;
+    animation:pulseBg 12s ease-in-out infinite alternate;
+}
+
+body::after{
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image:
+    radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-size:35px 35px;
+    opacity:0.25;
+    z-index:-1;
+    animation:moveGrid 20s linear infinite;
+}
+
+@keyframes pulseBg{
+    0%{
+        transform:scale(1);
+    }
+    100%{
+        transform:scale(1.05);
+        filter:blur(8px);
+    }
+}
+
+@keyframes moveGrid{
+    0%{
+        transform:translateY(0px);
+    }
+    100%{
+        transform:translateY(35px);
+    }
+}
+
+a{
+    text-decoration:none;
+    color:inherit;
+}
+
+.container{
+    width:92%;
+    max-width:1300px;
+    margin:auto;
+}
+
+/* NAVBAR */
+
+nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:22px 0;
+}
+
+.logo{
+    font-family:'Orbitron',sans-serif;
+    font-size:1.8rem;
+    color:var(--primary);
+    font-weight:700;
+    letter-spacing:2px;
+}
+
+.nav-links{
+    display:flex;
+    gap:28px;
+}
+
+.nav-links a{
+    color:#d1d5db;
+    transition:0.3s;
+}
+
+.nav-links a:hover{
+    color:var(--primary);
+}
+
+/* HERO */
+
+.hero{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    align-items:center;
+    gap:50px;
+    padding:20px 0 40px;
+}
+
+.hero-text h1{
+    font-size:4rem;
+    line-height:1.1;
+    font-family:'Orbitron',sans-serif;
+    margin-bottom:25px;
+}
+
+.hero-text span{
+    color:var(--primary);
+}
+
+.hero-text p{
+    color:var(--muted);
+    line-height:1.8;
+    margin-bottom:35px;
+}
+
+.hero-buttons{
+    display:flex;
+    flex-wrap:wrap;
+    gap:18px;
+}
+
+.cta-btn{
+    padding:15px 28px;
+    border-radius:50px;
+    font-weight:600;
+    transition:0.3s;
+}
+
+.primary-btn{
+    background:linear-gradient(90deg,#10ffb2,#00d4ff);
+    color:#000;
+    box-shadow:0 0 30px rgba(16,255,178,0.4);
+}
+
+.primary-btn:hover{
+    transform:translateY(-4px);
+}
+
+.secondary-btn{
+    border:1px solid rgba(255,255,255,0.2);
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(8px);
+}
+
+.hero-visual{
+    position:relative;
+}
+
+.preview-card{
+    border-radius:30px;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,0.1);
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(12px);
+}
+
+.preview-card img{
+    width:100%;
+    height:420px;
+    object-fit:cover;
+    display:block;
+}
+
+.floating-badge{
+    position:absolute;
+    right:-10px;
+    top:20px;
+    background:#111827;
+    padding:15px 20px;
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,0.1);
+    box-shadow:0 0 25px rgba(16,255,178,0.2);
+}
+
+.floating-badge span{
+    color:var(--primary);
+    font-size:1.3rem;
+    font-weight:700;
+    display:block;
+}
+
+/* STATS */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:20px;
+    margin-bottom:90px;
+}
+
+.stat-box{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:30px;
+    backdrop-filter:blur(12px);
+}
+
+.stat-box h3{
+    font-size:2rem;
+    color:var(--primary);
+    margin-bottom:10px;
+}
+
+.stat-box p{
+    color:var(--muted);
+}
+
+/* SECTION */
+
+.section-title{
+    text-align:center;
+    font-size:2.5rem;
+    margin-bottom:15px;
+    font-family:'Orbitron',sans-serif;
+}
+
+.section-desc{
+    text-align:center;
+    color:var(--muted);
+    max-width:700px;
+    margin:0 auto 50px;
+}
+
+/* GAME GRID */
+
+.game-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:25px;
+    margin-bottom:100px;
+}
+
+.game-card{
+    position:relative;
+    overflow:hidden;
+    border-radius:26px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.1);
+    backdrop-filter:blur(14px);
+    transition:0.4s ease;
+}
+
+.game-card::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(180deg, transparent, rgba(0,0,0,0.7));
+    opacity:0;
+    transition:0.4s;
+    pointer-events:none;
+}
+
+.game-card:hover::before{
+    opacity:1;
+}
+
+.game-card:hover{
+    transform:translateY(-8px);
+    border-color:rgba(16,255,178,0.5);
+    box-shadow:0 0 35px rgba(16,255,178,0.15);
+}
+
+.game-thumb{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+}
+
+.game-content{
+    padding:22px;
+    position:relative;
+    z-index:2;
+}
+
+.tag{
+    display:inline-block;
+    padding:6px 12px;
+    border-radius:40px;
+    background:rgba(16,255,178,0.15);
+    color:var(--primary);
+    font-size:0.75rem;
+    margin-bottom:16px;
+}
+
+.game-content h3{
+    margin-bottom:10px;
+    font-size:1.3rem;
+}
+
+.game-content p{
+    color:var(--muted);
+    line-height:1.7;
+    font-size:0.92rem;
+    margin-bottom:18px;
+}
+
+.card-footer{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.rating{
+    color:#ffd700;
+}
+
+.play-btn{
+    padding:10px 18px;
+    border-radius:14px;
+    background:linear-gradient(90deg,#10ffb2,#00d4ff);
+    color:#000;
+    font-weight:600;
+    transition:0.3s;
+    position:relative;
+    z-index:3;
+}
+
+.play-btn:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 20px rgba(16,255,178,0.35);
+}
+
+/* FOOTER */
+
+footer{
+    border-top:1px solid rgba(255,255,255,0.08);
+    padding:60px 0 30px;
+    background:rgba(0,0,0,0.35);
+}
+
+.footer-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:40px;
+    margin-bottom:40px;
+}
+
+.footer-col h4{
+    margin-bottom:18px;
+    color:var(--primary);
+}
+
+.footer-col a{
+    display:block;
+    color:#cbd5e1;
+    margin-bottom:10px;
+}
+
+.footer-bottom{
+    text-align:center;
+    color:#6b7280;
+    border-top:1px solid rgba(255,255,255,0.08);
+    padding-top:20px;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+    nav{
+        flex-direction:column;
+        gap:20px;
+    }
+
+    .hero-text h1{
+        font-size:3rem;
+    }
+}
+
+@media(max-width:600px){
+
+    .hero-text h1{
+        font-size:2.3rem;
+    }
+
+    .nav-links{
+        flex-wrap:wrap;
+        justify-content:center;
+    }
+}
+
+</style>
 </head>
+
 <body>
 
-    <div class="container">
+<div class="container">
 
-        <!-- NAVBAR -->
-        <nav>
-            <div class="logo">SnakeZilla TR</div>
+<nav>
 
-            <div class="nav-links">
-                <a href="#games">Games</a>
-                <a href="#leaderboard">Leaderboard</a>
-                <a href="#features">Features</a>
-                <a href="#support">Support</a>
-            </div>
-        </nav>
+<div class="logo">SnakeZilla TR</div>
 
-        <!-- HERO -->
-        <section class="hero">
-            <div class="hero-text">
-                <h1>Play The Legendary <span>Nokia Snake Game</span> Online</h1>
+<div class="nav-links">
+<a href="#games">Games</a>
+<a href="#support">Support</a>
+</div>
 
-                <p>
-                    Nokia style klasik yılan oyunundan modern neon arcade battles tak premium snake experience ka maza lein. Hemen game start karein aur high score banayein.
-                </p>
+</nav>
 
-                <div class="hero-buttons">
-                    <a href="#games" class="cta-btn primary-btn">▶ Play Now</a>
-                    <a href="#leaderboard" class="cta-btn secondary-btn">🏆 View Rankings</a>
-                </div>
-            </div>
+<!-- HERO -->
 
-            <div class="hero-visual">
-                <div class="preview-card">
-                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop" alt="Snake Game Preview">
-                </div>
+<section class="hero">
 
-                <div style="position:absolute; left:20px; bottom:20px; background:rgba(0,0,0,0.6); padding:14px 20px; border-radius:16px; backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.1);">
-                    <div style="font-size:0.8rem; color:#9ca3af; margin-bottom:6px;">LIVE NOW</div>
-                    <div style="font-weight:700; color:#10ffb2;">Nokia Snake Championship</div>
-                </div>
+<div class="hero-text">
 
-                <div class="floating-badge">
-                    <span>+120K</span>
-                    Active Players
-                </div>
-            </div>
-        </section>
+<h1>Play The Legendary <span>Nokia Snake Game</span></h1>
 
-        <!-- STATS -->
-        <section class="stats">
-            <div class="stat-box">
-                <h3>10+</h3>
-                <p>Game Modes</p>
-            </div>
+<p>
+Türkiye'nin premium snake gaming portalında klasik Nokia deneyiminden modern neon arena battles'a kadar tüm oyunları ücretsiz oynayın.
+</p>
 
-            <div class="stat-box">
-                <h3>120K+</h3>
-                <p>Monthly Players</p>
-            </div>
+<div class="hero-buttons">
 
-            <div class="stat-box">
-                <h3>4.9★</h3>
-                <p>Player Rating</p>
-            </div>
+<a href="#games" class="cta-btn primary-btn">
+▶ Play Now
+</a>
 
-            <div class="stat-box">
-                <h3>24/7</h3>
-                <p>Online Matches</p>
-            </div>
-        </section>
+<a href="nokia-yilan-oyunu.html" class="cta-btn secondary-btn">
+🎮 Nokia Game
+</a>
 
-        <!-- GAMES -->
-        <section id="games">
-            <h2 class="section-title">All Snake Game Modes</h2>
-            <p class="section-desc">
-                Explore all 10 premium snake game modes including Nokia Retro, Ninja Speed, Ghost Survival and futuristic portal adventures.
-            </p>
+</div>
 
-            <div class="game-grid">
+</div>
 
-                <div class="game-card">
-                    <img src="https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Nokia Snake">
-                    <div class="game-content">
-                        <span class="tag">Retro • Nokia</span>
-                        <h3>Nokia Yılan</h3>
-                        <p>Classic Nokia snake gameplay with nostalgic pixel vibes.</p>
-                        <div class="card-footer">
-                            <span class="rating">★★★★★ 5.0</span>
-                            <a href="nokia-yilan-oyunu.html" class="play-btn">Play</a>
-                        </div>
-                    </div>
-                </div>
+<div class="hero-visual">
 
-                <div class="game-card">
-                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Classic Snake">
-                    <div class="game-content">
-                        <span class="tag">Arcade • Retro</span>
-                        <h3>Klasik Yılan</h3>
-                        <p>Traditional snake mode with smooth controls and fast action.</p>
-                        <div class="card-footer">
-                            <span class="rating">★★★★★ 4.9</span>
-                            <a href="klasik-yilan-oyunu.html" class="play-btn">Play</a>
-                        </div>
-                    </div>
-                </div>
+<div class="preview-card">
 
-                <div class="game-card">
-                    <img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Modern Snake">
-                    <div class="game-content">
-                        <span class="tag">Neon • Action</span>
-                        <h3>Modern Yılan</h3>
-                        <p>Modern graphics and intense speed-based gameplay arena.</p>
-                        <div class="card-footer">
-                            <span class="rating">★★★★★ 5.0</span>
-                            <a href="modern-yilan-oyunu.html" class="play-btn">Play</a>
-                        </div>
-                    </div>
-                </div>
+<img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop">
 
-                <div class="game-card">
-                    <img src="https://images.unsplash.com/photo-1511882150382-421056c89033?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Old Snake">
-                    <div class="game-content">
-                        <span class="tag">Classic • Pixel</span>
-                        <h3>Eski Yılan</h3>
-                        <p>Old-school pixel snake challenge inspired by retro consoles.</p>
-                        <div class="card-footer">
-                            <span class="rating">★★★★☆ 4.7</span>
-                            <a href="yilan-oyunu-eski.html" class="play-btn">Play</a>
-                        </div>
-                    </div>
-                </div>
+</div>
 
-                <div class="game-card">
-                    <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Fast Ninja">
-                    <div class="game-content">
-                        <span class="tag">Speed • Ninja</span>
-                        <h3>Hızlı Ninja</h3>
-                        <p>Ultra fast reflex gameplay with ninja speed mechanics.</p>
-                        <div class="card-footer">
-                            <span class="rating">★★★★★ 4.9</span>
-                            <a href="hizli-yilan-oyunu.html" class="play-btn">Play</a>
-                        </div>
-                    </div>
-                </div>
+<div class="floating-badge">
+<span>+120K</span>
+Active Players
+</div>
 
-                <div class="game-card">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Portal Warp">
-                    <div class="game-content">
-                        <span class="tag">Portal • Sci-Fi</span>
-                        <h3>Portal Warp</h3>
-                        <p>Teleport through futuristic portals and survive longer.</p>
-                        <div class="card-footer">
-                            <span class="rating">★★★★★ 4.8</span>
-                            <a href="portal-yilan-oyunu.html" class="play-btn">Play</a>
-                        </div>
-                    </div>
-                </div>
+</div>
 
-                <div class="game-card">
-                    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Poison Forest">
-                    <div class="game-content">
-                        <span class="tag">Forest • Survival</span>
-                        <h3>Zehirli Orman</h3>
-                        <p>Dangerous jungle map with poison traps and hidden enemies.</p>
-                        <div class="card-footer">
-                            <span class="rating">★★★★☆ 4.6</span>
-                            <a href="zehirli-yilan-oyunu.html" class="play-btn">Play</a>
-                        </div>
-                    </div>
-                </div>
+</section>
 
-                <div class="game-card">
-                    <img src="https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Minefield">
-                    <div class="game-content">
-                        <span class="tag">Trap • Hardcore</span>
-                        <h3>Mayın Tarlası</h3>
-                        <p>Avoid hidden mines while collecting power foods.</p>
-                        <div class="card-footer">
-                            <span class="rating">★★★★☆ 4.7</span>
-                            <a href="mayin-tarlasi-yilan.html" class="play-btn">Play</a>
-                        </div>
-                    </div>
-                </div>
+<!-- STATS -->
 
-                <div class="game-card">
-                    <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Labyrinth">
-                    <div class="game-content">
-                        <span class="tag">Maze • Puzzle</span>
-                        <h3>Yılan Labirenti</h3>
-                        <p>Escape tight maze corridors and test your strategy skills.</p>
-                        <div class="card-footer">
-                            <span class="rating">★★★★★ 4.9</span>
-                            <a href="yilan-labirenti.html" class="play-btn">Play</a>
-                        </div>
-                    </div>
-                </div>
+<section class="stats">
 
-                <div class="game-card">
-                    <img src="https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?q=80&w=1200&auto=format&fit=crop" class="game-thumb" alt="Ghost Snake">
-                    <div class="game-content">
-                        <span class="tag">Ghost • Hardcore</span>
-                        <h3>Hayalet Modu</h3>
-                        <p>Invisible obstacles and dark mode survival gameplay.</p>
-                        <div class="card-footer">
-                            <span class="rating">★★★★★ 4.9</span>
-                            <a href="ghost-yilan-oyunu.html" class="play-btn">Play</a>
-                        </div>
-                    </div>
-                </div>
+<div class="stat-box">
+<h3>10+</h3>
+<p>Game Modes</p>
+</div>
 
-            </div>
-        </section>
+<div class="stat-box">
+<h3>120K+</h3>
+<p>Monthly Players</p>
+</div>
 
-        <!-- LEADERBOARD -->
-        <section class="leaderboard" id="leaderboard">
+<div class="stat-box">
+<h3>4.9★</h3>
+<p>Player Rating</p>
+</div>
 
-            <div class="board">
-                <h3>🏆 Top Players Of The Week</h3>
+<div class="stat-box">
+<h3>24/7</h3>
+<p>Online Matches</p>
+</div>
 
-                <div class="player">
-                    <div class="player-name">
-                        <div class="rank">1</div>
-                        <div>
-                            <strong>SnakeMasterX</strong><br>
-                            <small>Modern Arena</small>
-                        </div>
-                    </div>
+</section>
 
-                    <div class="points">98,420 PTS</div>
-                </div>
+<!-- GAMES -->
 
-                <div class="player">
-                    <div class="player-name">
-                        <div class="rank">2</div>
-                        <div>
-                            <strong>TurboVenom</strong><br>
-                            <small>Ninja Speed</small>
-                        </div>
-                    </div>
+<section id="games">
 
-                    <div class="points">91,010 PTS</div>
-                </div>
+<h2 class="section-title">
+All Snake Game Modes
+</h2>
 
-                <div class="player">
-                    <div class="player-name">
-                        <div class="rank">3</div>
-                        <div>
-                            <strong>PixelSnake</strong><br>
-                            <small>Retro Classic</small>
-                        </div>
-                    </div>
+<p class="section-desc">
+Explore all premium snake game experiences.
+</p>
 
-                    <div class="points">84,600 PTS</div>
-                </div>
+<div class="game-grid">
 
-                <div class="player">
-                    <div class="player-name">
-                        <div class="rank">4</div>
-                        <div>
-                            <strong>NightCrawler</strong><br>
-                            <small>Ghost Mode</small>
-                        </div>
-                    </div>
+<!-- 1 -->
 
-                    <div class="points">80,440 PTS</div>
-                </div>
-            </div>
+<div class="game-card">
 
-            <div class="welcome-strip">
-                <h3>👋 Welcome Back Gamer</h3>
+<img src="https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=1200&auto=format&fit=crop" class="game-thumb">
 
-                <p style="color:#9ca3af; line-height:1.8;">
-                    Login karke apna XP level, streak rewards aur hall of fame ranking unlock karein.
-                </p>
+<div class="game-content">
 
-                <div class="welcome-box">
-                    <strong>Current Status</strong>
-                    <p>
-                        Level 18 • Daily Streak: 7 Days • Total Score: 312,550 XP
-                    </p>
-                </div>
+<span class="tag">Retro • Nokia</span>
 
-                <div class="welcome-box">
-                    <strong>Daily Challenge</strong>
-                    <p>
-                        Complete 3 matches without collision and earn bonus neon skins.
-                    </p>
-                </div>
-            </div>
+<h3>Nokia Yılan</h3>
 
-        </section>
+<p>Classic Nokia snake gameplay with nostalgic vibes.</p>
 
-        <!-- FEATURES -->
-        <section id="features">
-            <h2 class="section-title">Why Players Love SnakeZilla?</h2>
-            <p class="section-desc">
-                Competitive gaming experience designed for speed, immersion and future monetization scalability.
-            </p>
+<div class="card-footer">
 
-            <div style="display:flex; justify-content:center; gap:18px; flex-wrap:wrap; margin-bottom:45px;">
-                <span style="padding:10px 18px; border-radius:40px; background:rgba(16,255,178,0.12); border:1px solid rgba(16,255,178,0.25);">🎮 Arcade</span>
-                <span style="padding:10px 18px; border-radius:40px; background:rgba(0,180,255,0.12); border:1px solid rgba(0,180,255,0.25);">⚡ Fast Action</span>
-                <span style="padding:10px 18px; border-radius:40px; background:rgba(140,0,255,0.12); border:1px solid rgba(140,0,255,0.25);">👻 Hardcore Modes</span>
-                <span style="padding:10px 18px; border-radius:40px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1);">🏆 Leaderboards</span>
-            </div>
+<span class="rating">★★★★★</span>
 
-            <div class="features">
+<a href="nokia-yilan-oyunu.html" class="play-btn">
+Play
+</a>
 
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h4>Lightning Fast Loading</h4>
-                    <p>
-                        Optimized structure aur lightweight assets ke saath ultra fast gameplay.
-                    </p>
-                </div>
+</div>
 
-                <div class="feature-card">
-                    <div class="feature-icon">🎮</div>
-                    <h4>Premium Arcade UI</h4>
-                    <p>
-                        Netflix aur Steam inspired professional gaming interface.
-                    </p>
-                </div>
+</div>
 
-                <div class="feature-card">
-                    <div class="feature-icon">🏅</div>
-                    <h4>Competitive Rankings</h4>
-                    <p>
-                        Real-time leaderboard aur hall of fame engagement ko boost karta hai.
-                    </p>
-                </div>
+</div>
 
-                <div class="feature-card">
-                    <div class="feature-icon">📈</div>
-                    <h4>SEO & Monetization Ready</h4>
-                    <p>
-                        Structured headings, responsive layout aur future ad integration support.
-                    </p>
-                </div>
+<!-- 2 -->
 
-            </div>
-        </section>
+<div class="game-card">
 
-    </div>
+<img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop" class="game-thumb">
 
-    <!-- FOOTER -->
-    <footer id="support">
-        <div class="container">
+<div class="game-content">
 
-            <div class="footer-grid">
+<span class="tag">Arcade</span>
 
-                <div class="footer-col">
-                    <h4>SnakeZilla TR</h4>
-                    <p style="color:#9ca3af; line-height:1.8;">
-                        Türkiye'nin premium snake gaming destination platformu.
-                    </p>
-                </div>
+<h3>Klasik Yılan</h3>
 
-                <div class="footer-col">
-                    <h4>Quick Links</h4>
-                    <a href="#">About Us</a>
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms Of Service</a>
-                    <a href="#">Contact</a>
-                </div>
+<p>Traditional snake gameplay with fast action.</p>
 
-                <div class="footer-col">
-                    <h4>Game Modes</h4>
-                    <a href="#">Classic Snake</a>
-                    <a href="#">Modern Arena</a>
-                    <a href="#">Ghost Survival</a>
-                    <a href="#">Labyrinth Mode</a>
-                </div>
+<div class="card-footer">
 
-                <div class="footer-col">
-                    <h4>Social Media</h4>
-                    <a href="#">Discord Community</a>
-                    <a href="#">Instagram</a>
-                    <a href="#">YouTube</a>
-                    <a href="#">TikTok</a>
-                </div>
+<span class="rating">★★★★★</span>
 
-            </div>
+<a href="klasik-yilan-oyunu.html" class="play-btn">
+Play
+</a>
 
-            <div class="footer-bottom">
-                © 2026 SnakeZilla TR — All Rights Reserved.
-            </div>
+</div>
 
-        </div>
-    </footer>
+</div>
+
+</div>
+
+<!-- 3 -->
+
+<div class="game-card">
+
+<img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?q=80&w=1200&auto=format&fit=crop" class="game-thumb">
+
+<div class="game-content">
+
+<span class="tag">Modern</span>
+
+<h3>Modern Yılan</h3>
+
+<p>Neon graphics and futuristic snake arena.</p>
+
+<div class="card-footer">
+
+<span class="rating">★★★★★</span>
+
+<a href="modern-yilan-oyunu.html" class="play-btn">
+Play
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- 4 -->
+
+<div class="game-card">
+
+<img src="https://images.unsplash.com/photo-1511882150382-421056c89033?q=80&w=1200&auto=format&fit=crop" class="game-thumb">
+
+<div class="game-content">
+
+<span class="tag">Classic</span>
+
+<h3>Eski Yılan</h3>
+
+<p>Retro pixel snake challenge.</p>
+
+<div class="card-footer">
+
+<span class="rating">★★★★☆</span>
+
+<a href="eski-yilan-oyunu.html" class="play-btn">
+Play
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- 5 -->
+
+<div class="game-card">
+
+<img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1200&auto=format&fit=crop" class="game-thumb">
+
+<div class="game-content">
+
+<span class="tag">Speed</span>
+
+<h3>Hızlı Ninja</h3>
+
+<p>Ultra fast reflex gameplay.</p>
+
+<div class="card-footer">
+
+<span class="rating">★★★★★</span>
+
+<a href="hizli-yilan-oyunu.html" class="play-btn">
+Play
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- 6 -->
+
+<div class="game-card">
+
+<img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1200&auto=format&fit=crop" class="game-thumb">
+
+<div class="game-content">
+
+<span class="tag">Portal</span>
+
+<h3>Portal Warp</h3>
+
+<p>Teleport and survive futuristic arenas.</p>
+
+<div class="card-footer">
+
+<span class="rating">★★★★★</span>
+
+<a href="portal-yilan-oyunu.html" class="play-btn">
+Play
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- 7 -->
+
+<div class="game-card">
+
+<img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop" class="game-thumb">
+
+<div class="game-content">
+
+<span class="tag">Forest</span>
+
+<h3>Zehirli Orman</h3>
+
+<p>Poison jungle survival challenge.</p>
+
+<div class="card-footer">
+
+<span class="rating">★★★★☆</span>
+
+<a href="zehirli-yilan-oyunu.html" class="play-btn">
+Play
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- 8 -->
+
+<div class="game-card">
+
+<img src="https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?q=80&w=1200&auto=format&fit=crop" class="game-thumb">
+
+<div class="game-content">
+
+<span class="tag">Trap</span>
+
+<h3>Mayın Tarlası</h3>
+
+<p>Avoid mines and survive longer.</p>
+
+<div class="card-footer">
+
+<span class="rating">★★★★☆</span>
+
+<a href="mayin-tarlasi-yilan.html" class="play-btn">
+Play
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- 9 -->
+
+<div class="game-card">
+
+<img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=1200&auto=format&fit=crop" class="game-thumb">
+
+<div class="game-content">
+
+<span class="tag">Maze</span>
+
+<h3>Yılan Labirenti</h3>
+
+<p>Escape maze corridors and obstacles.</p>
+
+<div class="card-footer">
+
+<span class="rating">★★★★★</span>
+
+<a href="yilan-labirenti.html" class="play-btn">
+Play
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- 10 -->
+
+<div class="game-card">
+
+<img src="https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?q=80&w=1200&auto=format&fit=crop" class="game-thumb">
+
+<div class="game-content">
+
+<span class="tag">Ghost</span>
+
+<h3>Hayalet Modu</h3>
+
+<p>Invisible obstacles and hardcore gameplay.</p>
+
+<div class="card-footer">
+
+<span class="rating">★★★★★</span>
+
+<a href="ghost-yilan-oyunu.html" class="play-btn">
+Play
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+</div>
+
+<!-- FOOTER -->
+
+<footer id="support">
+
+<div class="container">
+
+<div class="footer-grid">
+
+<div class="footer-col">
+
+<h4>SnakeZilla TR</h4>
+
+<p style="color:#9ca3af; line-height:1.8;">
+Türkiye'nin premium snake gaming portalı.
+</p>
+
+</div>
+
+<div class="footer-col">
+
+<h4>Quick Links</h4>
+
+<a href="#">About</a>
+<a href="#">Privacy Policy</a>
+<a href="#">Terms</a>
+<a href="#">Contact</a>
+
+</div>
+
+<div class="footer-col">
+
+<h4>Social</h4>
+
+<a href="#">Discord</a>
+<a href="#">Instagram</a>
+<a href="#">YouTube</a>
+
+</div>
+
+</div>
+
+<div class="footer-bottom">
+© 2026 SnakeZilla TR — All Rights Reserved.
+</div>
+
+</div>
+
+</footer>
 
 </body>
 </html>
