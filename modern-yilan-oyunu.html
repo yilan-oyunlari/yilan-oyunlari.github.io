@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Modern Yılan Oyunu oyna. Klasik yılan oyununun seviye atlamalı, renk değiştiren modern ve akıcı versiyonu. Ücretsiz tarayıcı oyunu!">
+    <meta name="keywords" content="modern yılan oyunu, yılan oyunu oyna, yeni nesil yılan oyunu, yılan evrimi, ücretsiz oyunlar">
+    <title>Modern Yılan Oyunu | Modern Snake - SnakeZilla TR</title>
+    <style>
+        /* Modern Pro Indie Theme */
+        :root {
+            --bg-color: #0b0c10;
+            --panel-bg: #1f2833;
+            --text-main: #c5c6c7;
+            --neon-blue: #45a29e;
+            --neon-blue-bright: #66fcf1;
+            --font-stack: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0; padding: 0; overflow: hidden; background-color: var(--bg-color);
+            background-image: radial-gradient(rgba(102, 252, 241, 0.05) 1px, transparent 1px);
+            background-size: 25px 25px; color: var(--text-main); font-family: var(--font-stack);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;
+            touch-action: none;
+        }
+
+        /* Transparent Glass HUD */
+        #hud {
+            position: absolute; top: 15px; width: 90vw; max-width: 400px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(31, 40, 51, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(102, 252, 241, 0.2);
+            box-sizing: border-box; z-index: 5; font-weight: bold; font-size: 16px; color: var(--neon-blue);
+        }
+
+        .hud-item span { color: #fff; font-size: 18px; margin-left: 5px; }
+
+        /* Game Canvas */
+        canvas {
+            background: rgba(0, 0, 0, 0.4); border-radius: 12px; border: 2px solid var(--neon-blue-bright);
+            box-shadow: 0 0 30px rgba(102, 252, 241, 0.15); display: block; max-width: 95vw;
+        }
+
+        /* UI Overlays */
+        .overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(11, 12, 16, 0.95); padding: 40px; border-radius: 20px;
+            border: 1px solid var(--neon-blue-bright); box-shadow: 0 0 40px rgba(102, 252, 241, 0.2);
+            text-align: center; z-index: 10; width: 80vw; max-width: 350px;
+        }
+
+        .overlay h1 { margin-top: 0; color: var(--neon-blue-bright); font-size: 30px; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 0 10px rgba(102, 252, 241, 0.4); }
+
+        .play-btn {
+            background: linear-gradient(135deg, var(--neon-blue-bright), var(--neon-blue)); color: #000;
+            border: none; padding: 15px 40px; font-size: 22px; font-weight: bold;
+            border-radius: 30px; cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(102, 252, 241, 0.3); text-transform: uppercase; margin-top: 10px;
+        }
+        .play-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 25px rgba(102, 252, 241, 0.5); }
+        .play-btn:active { transform: translateY(1px); }
+
+        .secondary-btn {
+            background: transparent; color: var(--neon-blue-bright); border: 2px solid var(--neon-blue-bright);
+            padding: 10px 20px; font-size: 16px; font-weight: bold; border-radius: 20px;
+            cursor: pointer; margin-top: 15px; transition: 0.3s;
+        }
+        .secondary-btn:hover { background: var(--neon-blue-bright); color: #000; }
+
+        /* Level Up Flash Animation */
+        #flashOverlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; opacity: 0; pointer-events: none; z-index: 20;
+        }
+        .flash-anim { animation: flash 0.4s ease-out; }
+        @keyframes flash { 0% { opacity: 0.6; } 100% { opacity: 0; } }
+        
+        #levelUpText {
+            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 36px; color: var(--neon-blue-bright); font-weight: bold; text-shadow: 0 0 20px #fff;
+            opacity: 0; pointer-events: none; z-index: 21; transition: 0.5s; text-transform: uppercase;
+        }
+        .text-pop { animation: popText 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popText { 0% { transform: translate(-50%, -40%) scale(0.5); opacity: 1; } 80% { transform: translate(-50%, -60%) scale(1.2); opacity: 1; } 100% { opacity: 0; } }
+
+        /* Mobile Controls */
+        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; width: 220px; }
+        .d-btn { background: rgba(102, 252, 241, 0.05); border: 1px solid rgba(102, 252, 241, 0.3); color: var(--neon-blue-bright); height: 60px; border-radius: 12px; font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; }
+        .d-btn:active { background: var(--neon-blue-bright); color: #000; transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div id="hud">
+        <div class="hud-item">SKOR:<span id="scoreVal">0</span></div>
+        <div class="hud-item" style="color:var(--neon-blue-bright);">SEVİYE:<span id="levelVal">1</span></div>
+        <div class="hud-item">REKOR:<span id="highScoreVal">0</span></div>
+    </div>
+
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+    <div id="flashOverlay"></div>
+    <div id="levelUpText">EVRİM TAMAMLANDI!</div>
+
+    <div class="controls">
+        <div></div><div id="btnUp" class="d-btn">▲</div><div></div>
+        <div id="btnLeft" class="d-btn">◄</div><div id="btnDown" class="d-btn">▼</div><div id="btnRight" class="d-btn">►</div>
+    </div>
+
+    <div id="startScreen" class="overlay">
+        <h1>MODERN YILAN</h1>
+        <p style="color:#aaa; margin-bottom: 25px;">Fareleri avla, seviye atla ve yılanın evrim geçirmesini izle!</p>
+        <button class="play-btn" onclick="initGame()">OYNA</button>
+    </div>
+
+    <div id="gameOverScreen" class="overlay" style="display: none;">
+        <h1 style="color: #ff6b6b;">OYUN BİTTİ</h1>
+        <h2 style="margin: 10px 0;">Skor: <span id="finalScore" style="color:var(--neon-blue-bright);">0</span></h2>
+        <button class="play-btn" style="margin-top: 15px;" onclick="document.getElementById('gameOverScreen').style.display='none'; document.getElementById('startScreen').style.display='block';">YENİDEN BAŞLA</button>
+        <br>
+        <button class="secondary-btn" onclick="shareScore()">Skoru Paylaş 📤</button>
+    </div>
+
+    <script>
+        // --- Web Audio Synth Engine ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+        let bgmInterval;
+        let isMusicPlaying = false;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playSFX(type) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            let now = audioCtx.currentTime;
+
+            if (type === 'eat') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
+            } else if (type === 'die') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(200, now);
+                osc.frequency.exponentialRampToValueAtTime(40, now + 0.5);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now); osc.stop(now + 0.5);
+            } else if (type === 'levelUp') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.setValueAtTime(600, now + 0.1);
+                osc.frequency.setValueAtTime(800, now + 0.2);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.4);
+                osc.start(now); osc.stop(now + 0.4);
+            }
+        }
+
+        // Upbeat Modern BGM
+        const notes = [261.63, 329.63, 392.00, 523.25]; 
+        let noteIndex = 0;
+
+        function startBGM() {
+            if(!audioCtx) return;
+            stopBGM(); isMusicPlaying = true;
+            bgmInterval = setInterval(() => {
+                if(!isMusicPlaying) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(notes[noteIndex], audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.25);
+                noteIndex = (noteIndex + 1) % notes.length;
+            }, 350);
+        }
+
+        function stopBGM() { isMusicPlaying = false; if(bgmInterval) clearInterval(bgmInterval); }
+
+        // --- Game Setup ---
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const gridSize = 20;
+        const tileCount = canvas.width / gridSize;
+        
+        let score = 0, level = 1, highScore = localStorage.getItem("modernYilanRekor") || 0;
+        document.getElementById("highScoreVal").innerText = highScore;
+        
+        let snake = []; let prevSnake = []; 
+        let food = {x: 0, y: 0};
+        
+        let d = "RIGHT", nextD = "RIGHT";
+        let gameActive = false, lastTickTime = 0, reqAnimFrameId;
+        let tickRate = 180;
+
+        function lerp(start, end, amt) { return (1 - amt) * start + amt * end; }
+
+        function initGame() {
+            initAudio(); document.getElementById("startScreen").style.display = "none";
+            
+            snake = [{x: 5, y: 10}, {x: 4, y: 10}, {x: 3, y: 10}];
+            prevSnake = JSON.parse(JSON.stringify(snake));
+            d = "RIGHT"; nextD = "RIGHT";
+            score = 0; level = 1; tickRate = 180;
+            
+            document.getElementById("scoreVal").innerText = score;
+            document.getElementById("levelVal").innerText = level;
+            
+            spawnFood(); startBGM(); gameActive = true;
+            lastTickTime = performance.now();
+            
+            if(reqAnimFrameId) cancelAnimationFrame(reqAnimFrameId);
+            gameLoop(performance.now());
+        }
+
+        function spawnFood() {
+            let valid = false;
+            while(!valid) {
+                food = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
+                valid = true;
+                snake.forEach(s => { if(s.x === food.x && s.y === food.y) valid = false; });
+            }
+        }
+
+        function logicTick() {
+            d = nextD;
+            prevSnake = JSON.parse(JSON.stringify(snake));
+
+            let head = {x: snake[0].x, y: snake[0].y};
+            if(d == "LEFT") head.x -= 1;
+            if(d == "UP") head.y -= 1;
+            if(d == "RIGHT") head.x += 1;
+            if(d == "DOWN") head.y += 1;
+
+            if(head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount || 
+               snake.some(s => s.x === head.x && s.y === head.y)) {
+                gameOver(); return;
+            }
+
+            snake.unshift(head);
+
+            if(head.x === food.x && head.y === food.y) {
+                score++; playSFX('eat');
+                document.getElementById("scoreVal").innerText = score;
+                
+                if(score % 5 === 0) {
+                    level++;
+                    tickRate = Math.max(70, tickRate - 15);
+                    document.getElementById("levelVal").innerText = level;
+                    playSFX('levelUp');
+                    
+                    let flash = document.getElementById("flashOverlay");
+                    let txt = document.getElementById("levelUpText");
+                    flash.classList.add("flash-anim"); txt.classList.add("text-pop");
+                    setTimeout(() => { flash.classList.remove("flash-anim"); txt.classList.remove("text-pop"); }, 1000);
+                }
+                spawnFood();
+            } else {
+                snake.pop(); 
+            }
+        }
+
+        function gameOver() {
+            gameActive = false; stopBGM(); playSFX('die');
+            if(score > highScore) {
+                highScore = score;
+                localStorage.setItem("modernYilanRekor", highScore);
+                document.getElementById("highScoreVal").innerText = highScore;
+            }
+            document.getElementById("finalScore").innerText = score;
+            document.getElementById("gameOverScreen").style.display = "block";
+        }
+
+        // Draw Mouse (Fare)
+        function drawMouse(fx, fy) {
+            ctx.shadowBlur = 10; ctx.shadowColor = "#a4b0be";
+            
+            // Body
+            ctx.fillStyle = "#a4b0be";
+            ctx.beginPath(); ctx.ellipse(fx, fy, 8, 6, 0, 0, Math.PI*2); ctx.fill();
+            
+            // Ears
+            ctx.fillStyle = "#747d8c";
+            ctx.beginPath(); ctx.arc(fx - 4, fy - 5, 3, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(fx + 4, fy - 5, 3, 0, Math.PI*2); ctx.fill();
+            
+            // Nose & Tail
+            ctx.fillStyle = "#ff9ff3";
+            ctx.beginPath(); ctx.arc(fx, fy + 5, 1.5, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle = "#ff9ff3"; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.moveTo(fx, fy - 6); ctx.quadraticCurveTo(fx + 6, fy - 12, fx + 2, fy - 15); ctx.stroke();
+            
+            ctx.shadowBlur = 0;
+        }
+
+        // Snake Evolution Colors
+        function getSnakeColors(currentLevel) {
+            if (currentLevel === 1) return { head: "#2ecc71", body: "#27ae60" }; // Green Snake
+            if (currentLevel === 2) return { head: "#f1c40f", body: "#f39c12" }; // Golden Python
+            if (currentLevel === 3) return { head: "#e67e22", body: "#d35400" }; // Orange Viper
+            if (currentLevel === 4) return { head: "#e74c3c", body: "#c0392b" }; // Red King
+            return { head: "#2c3e50", body: "#1a252f" }; // Siyah Mamba (Black Mamba)
+        }
+
+        function gameLoop(currentTime) {
+            if(!gameActive) return;
+            reqAnimFrameId = requestAnimationFrame(gameLoop);
+
+            let elapsedTime = currentTime - lastTickTime;
+            
+            if(elapsedTime >= tickRate) {
+                logicTick();
+                lastTickTime = currentTime;
+                elapsedTime = 0; 
+            }
+
+            let progress = Math.min(elapsedTime / tickRate, 1);
+            draw(progress);
+        }
+
+        function draw(progress) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Food
+            let fx = food.x * gridSize + gridSize/2;
+            let fy = food.y * gridSize + gridSize/2;
+            drawMouse(fx, fy);
+
+            // Draw Lerped Snake
+            for(let i = 0; i < snake.length; i++) {
+                let s = snake[i]; let p = prevSnake[i] || s; 
+                let drawX = lerp(p.x, s.x, progress) * gridSize;
+                let drawY = lerp(p.y, s.y, progress) * gridSize;
+
+                let colors = getSnakeColors(level);
+                ctx.fillStyle = i === 0 ? colors.head : colors.body;
+                if(i===0) { ctx.shadowBlur = 12; ctx.shadowColor = colors.head; }
+                
+                ctx.beginPath(); ctx.arc(drawX + gridSize/2, drawY + gridSize/2, gridSize/2.2, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0;
+
+                if(i === 0) {
+                    ctx.fillStyle = level >= 5 ? "#ff4757" : "#fff"; // Red eyes for Black Mamba
+                    ctx.beginPath(); ctx.arc(drawX + gridSize/2 + (d=="RIGHT"?4:d=="LEFT"?-4:0), drawY + gridSize/2 + (d=="DOWN"?4:d=="UP"?-4:0) - 3, 2, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(drawX + gridSize/2 + (d=="RIGHT"?4:d=="LEFT"?-4:0), drawY + gridSize/2 + (d=="DOWN"?4:d=="UP"?-4:0) + 3, 2, 0, Math.PI*2); ctx.fill();
+                    
+                    ctx.fillStyle = "#000";
+                    ctx.beginPath(); ctx.arc(drawX + gridSize/2 + (d=="RIGHT"?4:d=="LEFT"?-4:0), drawY + gridSize/2 + (d=="DOWN"?4:d=="UP"?-4:0) - 3, 1, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(drawX + gridSize/2 + (d=="RIGHT"?4:d=="LEFT"?-4:0), drawY + gridSize/2 + (d=="DOWN"?4:d=="UP"?-4:0) + 3, 1, 0, Math.PI*2); ctx.fill();
+                }
+            }
+        }
+
+        // Controls
+        window.addEventListener('keydown', e => {
+            initAudio(); 
+            if([37, 38, 39, 40].includes(e.keyCode)) e.preventDefault();
+            if(e.keyCode == 37 && d != "RIGHT") nextD = "LEFT";
+            else if(e.keyCode == 38 && d != "DOWN") nextD = "UP";
+            else if(e.keyCode == 39 && d != "LEFT") nextD = "RIGHT";
+            else if(e.keyCode == 40 && d != "UP") nextD = "DOWN";
+        });
+
+        const bindBtn = (id, dir, opp) => {
+            const btn = document.getElementById(id);
+            const handler = (e) => { e.preventDefault(); initAudio(); if(d != opp) nextD = dir; };
+            btn.addEventListener("touchstart", handler, {passive: false});
+            btn.addEventListener("mousedown", handler);
+        };
+        bindBtn("btnUp", "UP", "DOWN"); bindBtn("btnDown", "DOWN", "UP"); 
+        bindBtn("btnLeft", "LEFT", "RIGHT"); bindBtn("btnRight", "RIGHT", "LEFT");
+
+        function shareScore() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Modern Yılan Rekorum!',
+                    text: `SnakeZilla TR'de ${score} skor yaptım ve Seviye ${level}'e ulaştım! Benim rekorumu kırabilir misin?`,
+                    url: window.location.href
+                }).catch(console.error);
+            } else alert("Tarayıcınız paylaşma özelliğini desteklemiyor. Skor: " + score);
+        }
+    </script>
+</body>
+</html>
