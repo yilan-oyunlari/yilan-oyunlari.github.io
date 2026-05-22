@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Nokia Yılan Oyunu oyna. Efsanevi eski tuşlu telefonlardaki retro yılan oyununun modern tarayıcı versiyonu. Ücretsiz ve reklamsız nostalji yaşa!">
+    <meta name="keywords" content="nokia yılan oyunu, eski yılan oyunu, retro yılan oyunu, 3310 yılan oyunu, yılan oyunu oyna">
+    <title>Nokia Yılan Oyunu | Retro Snake - SnakeZilla TR</title>
+    <style>
+        /* Retro Nokia LCD Theme */
+        :root {
+            --lcd-bg: #87af73;
+            --lcd-dark: #223015;
+            --lcd-screen: #759c5e;
+            --bg-color: #111;
+            --font-stack: 'Courier New', Courier, monospace;
+        }
+
+        body {
+            margin: 0; padding: 0; overflow: hidden; background-color: var(--bg-color);
+            color: var(--lcd-bg); font-family: var(--font-stack);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;
+            touch-action: none;
+        }
+
+        /* Phone Body Casing Style */
+        .phone-casing {
+            background: #2c3e50;
+            padding: 20px 10px;
+            border-radius: 30px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 10px 30px rgba(0,0,0,0.9);
+            border: 2px solid #555;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* LCD Screen Bezel */
+        .screen-bezel {
+            background: #111;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #000;
+            position: relative;
+        }
+
+        /* Top HUD inside Screen */
+        #hud {
+            width: 100%;
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--lcd-screen);
+            padding: 5px 10px; border-bottom: 2px solid var(--lcd-dark);
+            box-sizing: border-box; font-weight: bold; font-size: 14px; color: var(--lcd-dark);
+            margin-bottom: 2px;
+        }
+
+        canvas {
+            background: var(--lcd-screen);
+            border: 2px solid var(--lcd-dark);
+            image-rendering: pixelated; /* Keeps it sharp and retro */
+            display: block; max-width: 90vw; width: 300px; height: 300px;
+        }
+
+        /* UI Overlays */
+        .overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: var(--lcd-bg); padding: 20px; border: 4px solid var(--lcd-dark);
+            text-align: center; z-index: 10; width: 70vw; max-width: 260px;
+            color: var(--lcd-dark); box-shadow: 10px 10px 0px rgba(0,0,0,0.5);
+        }
+
+        .overlay h1 { margin-top: 0; font-size: 24px; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid var(--lcd-dark); padding-bottom: 10px; }
+
+        /* Retro Play Button */
+        .play-btn {
+            background: var(--lcd-dark); color: var(--lcd-bg);
+            border: 2px solid var(--lcd-dark); padding: 10px 20px; font-size: 18px; font-weight: bold;
+            cursor: pointer; text-transform: uppercase; font-family: var(--font-stack);
+            margin-top: 10px; transition: 0.1s;
+        }
+        .play-btn:active { background: var(--lcd-bg); color: var(--lcd-dark); }
+
+        .secondary-btn {
+            background: transparent; color: var(--lcd-dark); border: 2px dashed var(--lcd-dark);
+            padding: 8px 15px; font-size: 14px; font-weight: bold; font-family: var(--font-stack);
+            cursor: pointer; margin-top: 15px;
+        }
+        .secondary-btn:active { background: var(--lcd-dark); color: var(--lcd-bg); }
+
+        /* Level Up Flash Animation */
+        #flashOverlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--lcd-dark); opacity: 0; pointer-events: none; z-index: 20;
+        }
+        .flash-anim { animation: flash 0.3s ease-out; }
+        @keyframes flash { 0% { opacity: 0.8; } 100% { opacity: 0; } }
+
+        /* Mobile Controls (Number Pad Style) */
+        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 25px; width: 200px; }
+        .d-btn { 
+            background: #dcdde1; border: 2px solid #7f8fa6; color: #2f3640; 
+            height: 50px; border-radius: 8px; font-size: 20px; font-weight: bold;
+            display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; user-select: none; box-shadow: 0 4px 0 #7f8fa6;
+        }
+        .d-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #7f8fa6; }
+    </style>
+</head>
+<body>
+
+    <div class="phone-casing">
+        <div class="screen-bezel">
+            <div id="hud">
+                <div>SKOR:<span id="scoreVal">0</span></div>
+                <div>SVY:<span id="levelVal">1</span></div>
+                <div>REKOR:<span id="highScoreVal">0</span></div>
+            </div>
+
+            <div style="position: relative;">
+                <canvas id="gameCanvas" width="300" height="300"></canvas>
+                <div id="flashOverlay"></div>
+                
+                <div id="startScreen" class="overlay">
+                    <h1>NOKIA YILAN</h1>
+                    <p style="font-size: 14px; font-weight: bold;">Nostaljiye Dönüş</p>
+                    <button class="play-btn" onclick="initGame()">BASLA</button>
+                </div>
+
+                <div id="gameOverScreen" class="overlay" style="display: none;">
+                    <h1>OYUN BITTI</h1>
+                    <h2 style="margin: 10px 0;">SKOR: <span id="finalScore">0</span></h2>
+                    <button class="play-btn" onclick="document.getElementById('gameOverScreen').style.display='none'; document.getElementById('startScreen').style.display='block';">TEKRAR</button>
+                    <br>
+                    <button class="secondary-btn" onclick="shareScore()">PAYLAS</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div></div><div id="btnUp" class="d-btn">2</div><div></div>
+            <div id="btnLeft" class="d-btn">4</div><div id="btnDown" class="d-btn">8</div><div id="btnRight" class="d-btn">6</div>
+        </div>
+    </div>
+
+    <script>
+        // --- 8-Bit Web Audio Synth Engine ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+        let bgmInterval;
+        let isMusicPlaying = false;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playSFX(type) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            let now = audioCtx.currentTime;
+
+            // Using square waves for retro 8-bit feel
+            osc.type = 'square'; 
+
+            if (type === 'eat') {
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.setValueAtTime(1200, now + 0.05);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.setValueAtTime(0, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
+            } else if (type === 'die') {
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.setValueAtTime(150, now + 0.2);
+                osc.frequency.setValueAtTime(75, now + 0.4);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.6);
+                osc.start(now); osc.stop(now + 0.6);
+            } else if (type === 'levelUp') {
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.setValueAtTime(600, now + 0.1);
+                osc.frequency.setValueAtTime(800, now + 0.2);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+            }
+        }
+
+        // --- Game Setup ---
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const gridSize = 15; // Thicker blocks for retro feel
+        const tileCount = canvas.width / gridSize;
+        
+        let score = 0, level = 1, highScore = localStorage.getItem("nokiaYilanRekor") || 0;
+        document.getElementById("highScoreVal").innerText = highScore;
+        
+        let snake = []; let prevSnake = []; 
+        let food = {x: 0, y: 0};
+        
+        let d = "RIGHT", nextD = "RIGHT";
+        let gameActive = false, lastTickTime = 0, reqAnimFrameId;
+        let tickRate = 200; // Slower, clunky retro speed
+
+        function lerp(start, end, amt) { return (1 - amt) * start + amt * end; }
+
+        function initGame() {
+            initAudio(); document.getElementById("startScreen").style.display = "none";
+            
+            snake = [{x: 5, y: 10}, {x: 4, y: 10}, {x: 3, y: 10}];
+            prevSnake = JSON.parse(JSON.stringify(snake));
+            d = "RIGHT"; nextD = "RIGHT";
+            score = 0; level = 1; tickRate = 200;
+            
+            document.getElementById("scoreVal").innerText = score;
+            document.getElementById("levelVal").innerText = level;
+            
+            spawnFood(); gameActive = true;
+            lastTickTime = performance.now();
+            
+            if(reqAnimFrameId) cancelAnimationFrame(reqAnimFrameId);
+            gameLoop(performance.now());
+        }
+
+        function spawnFood() {
+            let valid = false;
+            while(!valid) {
+                food = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
+                valid = true;
+                snake.forEach(s => { if(s.x === food.x && s.y === food.y) valid = false; });
+            }
+        }
+
+        function logicTick() {
+            d = nextD;
+            prevSnake = JSON.parse(JSON.stringify(snake));
+
+            let head = {x: snake[0].x, y: snake[0].y};
+            if(d == "LEFT") head.x -= 1;
+            if(d == "UP") head.y -= 1;
+            if(d == "RIGHT") head.x += 1;
+            if(d == "DOWN") head.y += 1;
+
+            // In old Nokia games, hitting the wall usually kills you
+            if(head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount || 
+               snake.some(s => s.x === head.x && s.y === head.y)) {
+                gameOver(); return;
+            }
+
+            snake.unshift(head);
+
+            if(head.x === food.x && head.y === food.y) {
+                score++; playSFX('eat');
+                document.getElementById("scoreVal").innerText = score;
+                
+                if(score % 5 === 0) {
+                    level++;
+                    tickRate = Math.max(80, tickRate - 20);
+                    document.getElementById("levelVal").innerText = level;
+                    playSFX('levelUp');
+                    
+                    let flash = document.getElementById("flashOverlay");
+                    flash.classList.add("flash-anim");
+                    setTimeout(() => { flash.classList.remove("flash-anim"); }, 300);
+                }
+                spawnFood();
+            } else {
+                snake.pop(); 
+            }
+        }
+
+        function gameOver() {
+            gameActive = false; playSFX('die');
+            if(score > highScore) {
+                highScore = score;
+                localStorage.setItem("nokiaYilanRekor", highScore);
+                document.getElementById("highScoreVal").innerText = highScore;
+            }
+            document.getElementById("finalScore").innerText = score;
+            document.getElementById("gameOverScreen").style.display = "block";
+        }
+
+        function gameLoop(currentTime) {
+            if(!gameActive) return;
+            reqAnimFrameId = requestAnimationFrame(gameLoop);
+
+            let elapsedTime = currentTime - lastTickTime;
+            
+            if(elapsedTime >= tickRate) {
+                logicTick();
+                lastTickTime = currentTime;
+                elapsedTime = 0; 
+            }
+
+            let progress = Math.min(elapsedTime / tickRate, 1);
+            draw(progress);
+        }
+
+        function draw(progress) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Food (Pixel block)
+            let fx = food.x * gridSize;
+            let fy = food.y * gridSize;
+            ctx.fillStyle = "#223015";
+            ctx.fillRect(fx + 2, fy + 2, gridSize - 4, gridSize - 4);
+
+            // Draw Lerped Snake (Kept sharp and blocky for retro feel)
+            for(let i = 0; i < snake.length; i++) {
+                let s = snake[i]; let p = prevSnake[i] || s; 
+                let drawX = lerp(p.x, s.x, progress) * gridSize;
+                let drawY = lerp(p.y, s.y, progress) * gridSize;
+
+                ctx.fillStyle = "#223015";
+                
+                // Gap between snake parts to show the segments like the real game
+                ctx.fillRect(drawX + 1, drawY + 1, gridSize - 2, gridSize - 2);
+            }
+        }
+
+        // Controls
+        window.addEventListener('keydown', e => {
+            initAudio(); 
+            if([37, 38, 39, 40].includes(e.keyCode)) e.preventDefault();
+            if(e.keyCode == 37 && d != "RIGHT") nextD = "LEFT";
+            else if(e.keyCode == 38 && d != "DOWN") nextD = "UP";
+            else if(e.keyCode == 39 && d != "LEFT") nextD = "RIGHT";
+            else if(e.keyCode == 40 && d != "UP") nextD = "DOWN";
+        });
+
+        const bindBtn = (id, dir, opp) => {
+            const btn = document.getElementById(id);
+            const handler = (e) => { e.preventDefault(); initAudio(); if(d != opp) nextD = dir; };
+            btn.addEventListener("touchstart", handler, {passive: false});
+            btn.addEventListener("mousedown", handler);
+        };
+        bindBtn("btnUp", "UP", "DOWN"); bindBtn("btnDown", "DOWN", "UP"); 
+        bindBtn("btnLeft", "LEFT", "RIGHT"); bindBtn("btnRight", "RIGHT", "LEFT");
+
+        function shareScore() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Nokia Yılan Rekorum!',
+                    text: `Nokia efsanesi Yılan oyununda ${score} skor yaptım! Sen beni geçebilir misin?`,
+                    url: window.location.href
+                }).catch(console.error);
+            } else alert("Tarayıcınız paylaşma özelliğini desteklemiyor. Skor: " + score);
+        }
+    </script>
+</body>
+</html>
