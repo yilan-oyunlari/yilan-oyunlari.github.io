@@ -2,70 +2,59 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Klasik Yılan Oyunu - Mobile Optimized</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnakeZilla Pro Engine</title>
     <style>
-        body { background: #050505; color: #fff; text-align: center; margin: 0; overflow: hidden; touch-action: none; }
-        canvas { background: #000; border: 2px solid #10ac84; display: block; margin: 10px auto; }
-        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 200px; margin: auto; }
-        .btn { padding: 20px; background: #111; border: 1px solid #10ac84; color: #10ac84; font-size: 20px; border-radius: 5px; }
-        .btn:active { background: #10ac84; color: #000; }
+        body { background: #050505; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; color: #fff; font-family: 'Consolas', monospace; }
+        #gameCanvas { background: #000; border: 2px solid #10ac84; box-shadow: 0 0 20px rgba(16,172,132,0.2); }
+        .hud { width: 400px; display: flex; justify-content: space-between; padding: 10px; }
     </style>
 </head>
 <body>
 
-    <div style="font-size: 20px; margin-top: 10px;">Skor: <span id="score">0</span></div>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
-
-    <div class="controls">
-        <div></div><button class="btn" id="up">▲</button><div></div>
-        <button class="btn" id="left">◄</button><button class="btn" id="down">▼</button><button class="btn" id="right">►</button>
+    <div class="hud">
+        <div>SKOR: <span id="score">0</span></div>
     </div>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
 
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
-        let box = 20, snake = [{x: 200, y: 200}], food = {x: 100, y: 100}, d = "RIGHT", score = 0;
 
-        // Mobile Controls
-        document.getElementById("up").addEventListener("touchstart", () => { if(d !== "DOWN") d = "UP"; });
-        document.getElementById("down").addEventListener("touchstart", () => { if(d !== "UP") d = "DOWN"; });
-        document.getElementById("left").addEventListener("touchstart", () => { if(d !== "RIGHT") d = "LEFT"; });
-        document.getElementById("right").addEventListener("touchstart", () => { if(d !== "LEFT") d = "RIGHT"; });
+        // Fluid Snake State
+        let snake = [{x: 200, y: 200}];
+        let velocity = {x: 2, y: 0}; // Smooth velocity
+        let targetVelocity = {x: 2, y: 0};
+        
+        function update() {
+            // Linear Interpolation (Lerp) for smooth turn
+            velocity.x += (targetVelocity.x - velocity.x) * 0.1;
+            velocity.y += (targetVelocity.y - velocity.y) * 0.1;
+            
+            snake[0].x += velocity.x;
+            snake[0].y += velocity.y;
+            
+            draw();
+            requestAnimationFrame(update);
+        }
 
         function draw() {
-            ctx.fillStyle = "#000"; ctx.fillRect(0, 0, 400, 400);
-
-            // Draw Snake (Snake shape - circles)
-            snake.forEach((part, index) => {
-                ctx.fillStyle = index === 0 ? "#10ac84" : "#0a7356";
-                ctx.beginPath();
-                ctx.arc(part.x + 10, part.y + 10, 10, 0, Math.PI * 2);
-                ctx.fill();
-            });
-
-            // Draw Food (Mouse shape - Oval body + tail line)
-            ctx.fillStyle = "#ff9f43";
+            ctx.fillStyle = "#000"; ctx.fillRect(0,0,400,400);
+            ctx.fillStyle = "#10ac84";
             ctx.beginPath();
-            ctx.ellipse(food.x + 10, food.y + 10, 8, 6, 0, 0, Math.PI * 2);
+            ctx.arc(snake[0].x, snake[0].y, 10, 0, Math.PI*2);
             ctx.fill();
-            ctx.strokeStyle = "#ff9f43";
-            ctx.beginPath(); ctx.moveTo(food.x + 18, food.y + 10); ctx.lineTo(food.x + 25, food.y + 10); ctx.stroke(); // tail
-
-            // Move
-            let head = {x: snake[0].x, y: snake[0].y};
-            if(d=="LEFT") head.x-=box; if(d=="UP") head.y-=box;
-            if(d=="RIGHT") head.x+=box; if(d=="DOWN") head.y+=box;
-
-            if(head.x == food.x && head.y == food.y) {
-                score++; food = {x: Math.floor(Math.random()*20)*box, y: Math.floor(Math.random()*20)*box};
-                document.getElementById("score").innerText = score;
-            } else snake.pop();
-
-            snake.unshift(head);
-            setTimeout(draw, 150);
         }
-        draw();
+
+        // Keyboard Controls
+        window.addEventListener('keydown', e => {
+            if(e.key === 'ArrowUp') targetVelocity = {x: 0, y: -2};
+            if(e.key === 'ArrowDown') targetVelocity = {x: 0, y: 2};
+            if(e.key === 'ArrowLeft') targetVelocity = {x: -2, y: 0};
+            if(e.key === 'ArrowRight') targetVelocity = {x: 2, y: 0};
+        });
+
+        update();
     </script>
 </body>
 </html>
