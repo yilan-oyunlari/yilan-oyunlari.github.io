@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Yılan Oyunlarının Evrimi: Klasik Retro'dan SnakeZilla TR'ye | Blog</title>
+    <meta name="description" content="Yılan oyunlarının nostaljik safarisi: 3310 Nokia'nın efsanevi piksel yılanından modern, high-graphics modlara kadar yılan oyunlarının evrimini bir oyuncunun gözünden okuyun.">
+    <meta name="keywords" content="yılan oyunu tarihi, nokia yılan oyunu, eski yılan oyunu oyna, retro snake game, snakezilla tr, eski yılan">
+    <link rel="canonical" href="https://yilan-oyunlari.github.io/blog/safari-klasik-retro.html">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root { --primary:#10ffb2; --dark:#050505; --card:rgba(255,255,255,0.06); --border:rgba(255,255,255,0.12); --text:#ffffff; --muted:#9ca3af; }
+        
+        html { scroll-behavior:smooth; }
+        body { background: radial-gradient(circle at top,#12202f 0%,#050505 45%,#000 100%); color:var(--text); font-family:'Poppins',sans-serif; overflow-x:hidden; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        /* Animated Background */
+        body::before { content:''; position:fixed; inset:0; background: radial-gradient(circle at 20% 20%, rgba(16,255,178,0.12), transparent 25%), radial-gradient(circle at 80% 30%, rgba(0,180,255,0.12), transparent 25%), radial-gradient(circle at 50% 80%, rgba(140,0,255,0.10), transparent 30%); z-index:-2; animation:pulseBg 12s ease-in-out infinite alternate; }
+        body::after { content:''; position:fixed; inset:0; background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px); background-size:35px 35px; opacity:0.25; z-index:-1; animation:moveGrid 20s linear infinite; }
+        @keyframes pulseBg { 0% { transform:scale(1); } 100% { transform:scale(1.05); filter:blur(8px); } }
+        @keyframes moveGrid { 0% { transform:translateY(0px); } 100% { transform:translateY(35px); } }
+        
+        a { text-decoration:none; color:inherit; }
+        .container { width:92%; max-width:1300px; margin:auto; flex-grow: 1; display: flex; flex-direction: column; }
+        
+        /* NAVBAR */
+        nav { display:flex; justify-content:space-between; align-items:center; padding:22px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px;}
+        .logo { font-family:'Orbitron',sans-serif; font-size:1.8rem; color:var(--primary); font-weight:700; letter-spacing:2px; }
+        .nav-links { display:flex; gap:28px; }
+        .nav-links a { color:#d1d5db; transition:0.3s; font-weight: 500; }
+        .nav-links a:hover { color:var(--primary); }
+
+        /* Blog Article Container */
+        .article-container { max-width: 900px; margin: 0 auto 80px auto; background: var(--card); border: 1px solid var(--border); padding: 50px; border-radius: 26px; backdrop-filter: blur(14px); line-height: 1.9; color: #cbd5e1; }
+        
+        /* Article Header */
+        .article-header { border-bottom: 1px solid var(--border); padding-bottom: 30px; margin-bottom: 40px; }
+        .article-category { display:inline-block; padding:6px 12px; border-radius:40px; background:rgba(16,255,178,0.15); color:var(--primary); font-size:0.75rem; margin-bottom:20px; }
+        .article-header h1 { color: #fff; font-family: 'Orbitron', sans-serif; font-size: 2.8rem; line-height: 1.2; margin-bottom: 20px; }
+        .article-meta { color: #6b7280; font-size: 0.9rem; }
+        
+        /* Article Body Content */
+        .article-body h2 { color: var(--primary); font-family: 'Orbitron', sans-serif; margin: 40px 0 20px 0; font-size: 1.8rem; }
+        .article-body h3 { color: #fff; margin: 30px 0 15px 0; font-size: 1.4rem; }
+        .article-body p { margin-bottom: 22px; font-size: 1.1rem; font-weight: 300; }
+        .article-body strong { color: #fff; font-weight: 600; }
+        .article-body blockquote { margin: 30px 0; padding-left: 20px; border-left: 4px solid var(--primary); color: #fff; font-style: italic; font-size: 1.2rem; }
+        .article-body ul { margin-bottom: 25px; margin-left: 25px; list-style-type: circle; }
+        .article-body ul li { margin-bottom: 12px; }
+
+        /* Highlight box for Eski Yılan */
+        .game-highlight { background: rgba(0,0,0,0.4); border: 2px dashed var(--primary); padding: 25px; border-radius: 15px; margin: 30px 0; }
+        .game-highlight h4 { color: #fff; margin-bottom: 10px; font-size: 1.3rem; }
+        .game-highlight a { color: var(--primary); font-weight: bold; text-decoration: underline; }
+
+        /* FOOTER */
+        footer { border-top:1px solid rgba(255,255,255,0.08); padding:60px 0 30px; background:rgba(0,0,0,0.35); width: 100%; margin-top: auto; }
+        .footer-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:40px; margin-bottom:40px; max-width:1300px; margin-left:auto; margin-right:auto; width:92%; }
+        .footer-col h4 { margin-bottom:18px; color:var(--primary); font-family: 'Orbitron', sans-serif; }
+        .footer-col a { display:block; color:#cbd5e1; margin-bottom:10px; transition: 0.3s;}
+        .footer-col a:hover { color: var(--primary); }
+        .footer-bottom { text-align:center; color:#6b7280; border-top:1px solid rgba(255,255,255,0.08); padding-top:20px; max-width:1300px; margin:auto; width:92%; }
+
+        /* MOBILE */
+        @media(max-width:900px) { nav { flex-direction:column; gap:20px; } }
+        @media(max-width:600px) { .article-container { padding: 25px; } .article-header h1 { font-size: 2rem; } .nav-links { flex-wrap:wrap; justify-content:center; } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <nav>
+            <a href="../index.html" class="logo">Yılan Oyunu</a>
+            <div class="nav-links">
+                <a href="../index.html#games">Games</a>
+                <a href="../index.html#support">Support</a>
+                <a href="index.html">Blogs</a>
+            </div>
+        </nav>
+
+        <article class="article-container">
+            <header class="article-header">
+                <span class="article-category">Nostalji & Tarih</span>
+                <h1>Yılan Oyunlarının Evrimi: Klasik Retro'dan SnakeZilla TR'ye Bir Yolculuk</h1>
+                <div class="article-meta">Mayıs 23, 2026 • 1 oyuncu gözünden • 12 dk okuma</div>
+            </header>
+            
+            <div class="article-body">
+                <p>Hatırlar mısınız? O yeşilimtrak, monokrom ekranlı Nokia brick telefonları... Hani şu cebimize girdiğinde bir tuğla gibi hissettiren ama elimizden düşmeyen efsaneler. Siyah, kare piksellerden oluşan bir 'yılanın' yine siyah, kare bir 'yemi' kovaladığı, yem yedikçe uzayan kuyruğuna çarpmamak için ter döktüğümüz o saf, katkısız eğlence anları. Eğer bu satırları okurken yüzünüzde hafif bir tebessüm beliriyorsa, muhtemelen siz de benim gibi 90'ların sonu ve 2000'lerin başındaki o yılan oyunu obsesyonunun bir parçasısınız.</p>
+
+                <p>Oyun dünyası bugün, akıl almaz grafikler, yapay zeka entegrasyonları ve VR gözlüklerle bambaşka bir boyuta evrildi. Ancak yılan oyunu, zamansız mekanikleriyle hayatta kalmayı başaran ender klasiklerden biri. Bu yazıda, bir oyun sever olarak benim için çok özel bir yere sahip olan yılan oyunlarının o ilkel, retro piksel günlerinden, bugün <strong>SnakeZilla TR</strong>'de deneyimlediğimiz modern, high-graphics arenalara kadar uzanan safarisini anlatmak istiyorum.</p>
+
+                <blockquote>"Sadece 5 dakika oynayıp bırakacağım" deyip saatlerce o siyah piksellerin peşinde koştuğumuz günleri asla unutamayız."</blockquote>
+
+                <h2>Her Şey Nasıl Başladı? 1970'ler ve 80'ler</h2>
+                <p>Nokia her ne kadar yılan oyununu kitlelere yaysa da, oyunun kökeni çok daha eskiye dayanıyor. İlk 'Snake' konseptli oyun, 1976 yılında Gremlin Industries tarafından üretilen **Blockade** adında bir arcade (atari salonu) makinesiydi. Blockade, bugünkü yılan oyununun tüm temel kurallarını belirlemişti: Sürekli ileri doğru hareket eden bir çizgi, yemleri yiyerek uzuyor ve duvara ya da kendi kuyruğuna çarparsa oyun bitiyor.</p>
+
+                <p>O zamanlar grafikler sadece birkaç beyaz çizgi ve kareden ibaretti. Ancak oyunun basitliği, onu inanılmaz derecede bağımlılık yapıcı kılıyordu. Takip eden yıllarda, Apple II ve Commodore 64 gibi ev bilgisayarları için çeşitli "Worm" ve "Snake" varyasyonları yapıldı. Ancak oyunun gerçek patlaması, cebimize girdiği ana kadar beklemek zorundaydı.</p>
+
+                <h2>Cepte Nostalji: Nokia Dönemi ve 3310 Efsanesi</h2>
+                <p>1997 yılı, yılan oyunu tarihi için milat sayılır. Finli telefon devi Nokia, efsanevi tasarımcı Taneli Armanto'nun geliştirdiği **Snake I** oyununu Nokia 6110 model telefonlarına ön yüklü olarak koydu. İşte her şey o zaman başladı.</p>
+
+                <p>Günün birinde, Türkiye'de hemen hemen her evde bir 3310 ya da 1100 belirdi. O zamanlar internet bugünkü gibi yaygın değildi, mobil oyun pazarı yoktu. Sahip olduğumuz tek eğlence, o tuş takımlarının üzerinde, 2, 4, 6 ve 8 rakamlarına ritmik bir şekilde basarak yılanı yönlendirmekti.</p>
+
+                <h3>O Piksel Karelerin Büyüsü</h3>
+                <p>Nostaljinin en güçlü olduğu yer burasıdır. Grafikler siyah-beyazdı, ekran küçüktü, kuyruk uzadıkça yılan yavaşlıyordu (ya da bazı modlarda hızlanıyordu). Ama oyun, bir reflex ve strateji testiydi. Kuyruk o kadar uzuyordu ki, tüm ekranı doldurmaya başladığınızda bir sonraki hamlenizi 5 saniye önceden planlamanız gerekiyordu.</p>
+
+                <p>Okul teneffüslerinde, otobüs yolculuklarında ya da akşamları babamızın telefonunu 'ödünç' aldığımızda, en yüksek skoru kimin yapacağı konusunda turnuvalar düzenlerdik. O basit piksel karelerin içinde, bugün AAA oyunlarında bile bulamadığımız bir tatmin hissi vardı.</p>
+
+                <h2>Zaman Değişiyor: High-Graphics ve Modern Modlar</h2>
+                <p>2000'lerin ortalarından itibaren akıllı telefonların çıkmasıyla, yılan oyunu da evrilmeye başladı. Grafikler 2D'den 3D'ye geçti, arenalar büyüdü, yılanlar daha 'yılana benzer' görünmeye başladı. Ancak oyunun o eski, retro ruhu zamanla kaybolur gibi oldu. Pek çok yapımcı, oyunun özündeki o basitliği kaybetmeden modern bir deneyim sunmakta zorlandı.</p>
+
+                <p>Ta ki modern web teknolojileri (Canvas, HTML5, Web Audio API) ve tutkulu indie geliştiriciler sahneye çıkana kadar. Bugün, tarayıcımızda oynadığımız yılan oyunları, eski telefonlardakinden çok daha akıcı, high-graphics neon arenalara ve benzersiz oyun mekaniklerine sahip.</p>
+
+                <h3>SnakeZilla TR'nin Evrime Katkısı</h3>
+                <p>Bugün SnakeZilla TR platformuna girdiğimde, yılan oyununun geçirdiği evrimi tüm netliğiyle görebiliyorum. Platform, klasik mekanikleri korurken, high-graphics modlarla (Neon Grafikler, Siber arenalar) ve benzersiz oynanış özellikleriyle (Mükemmel LERP Motoru) modern bir deneyim sunuyor. Ama SnakeZilla TR'yi benim için bu kadar özel kılan bir şey daha var.</p>
+
+                <div class="game-highlight">
+                    <h4>Benim Favorim: Eski Yılan</h4>
+                    <p>High-graphics arenaları sevsem de, o eski Nokia günlerinin nostalgisini arayan ruhum her zaman SnakeZilla TR'deki <strong>Eski Yılan (Classic Retro)</strong> moduna geri dönüyor. Bu mod, o eski piksel yılan challenge'ının appeal'ını mükemmel bir şekilde koruyor. Buradan deneyebilirsiniz: <a href="../eski-yilan-oyunu.html">Eski Yılan Oyna</a></p>
+                </div>
+
+                <h2>safari-klasik-retro: Nostalji ve Gelecek Bir Arada</h2>
+                <p>SnakeZilla TR'de oynadığımda, yılan oyununun safari safarisinin sadece bir nostaljiden ibaret olmadığını, aynı zamanda bir geleceği de olduğunu anlıyorum. Platform, her 5 puanda bir zorluğun arttığı (Taktiksel Derinlik) mekanikleri, mükemmel fluid hareketleri ve high-graphics neon arenaları ile oyunun özünü kaybetmeden modern bir yapıya evrilmesini sağlamış.</p>
+
+                <p>Bu, retro ruhunun appeal'ının ne kadar güçlü olduğunun bir kanıtı. Biz o piksel kareleri, o basit 8-bit sesleri sevdik çünkü onlar saf bir oyun deneyimiydi. SnakeZilla TR, hem 'Eski Yılan' moduyla o nostalgiyi yaşatıyor hem de modern varyasyonlarla (Hayalet Modu, Zehirli Orman, Hızlı Ninja) yılan oyununun geleceğini şekillendiriyor.</p>
+
+                <h2>Sonuç: Zamansız Bir Klasik</h2>
+                <p>Nokia telefonlardaki o siyah-beyaz günlerden bugün SnakeZilla TR'nin high-graphics siber dünyasına kadar yılan oyunu, bir safari safarisi gibi sürekli değişti ve evrildi. Ancak bir şey hiç değişmedi: Kuyruğuna çarpmamak için ter döktüğümüz o saf, adrenalin dolu, katkısız eğlence hissi.</p>
+
+                <p>Eğer siz de o eski günleri özlediyseniz, SnakeZilla TR'deki **Eski Yılan** moduna bir şans verin. O piksel karelerin içinde, hala keşfedilmeyi bekleyen bir nostalgia ve challenge appeal'ı var. Yılan oyunları evrimleşmeye devam edecek, ancak o retro piksel challenge'ının kalbimizdeki yeri her zaman ayrı kalacak.</p>
+            </div>
+        </article>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>SnakeZilla TR</h4>
+                <p style="color:#9ca3af; line-height:1.8;">Türkiye'nin premium snake gaming portalı.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Hızlı Linkler</h4>
+                <a href="../about.html">Hakkımızda</a>
+                <a href="../privacy.html">Gizlilik Politikası</a>
+                <a href="../terms.html">Kullanım Şartları</a>
+                <a href="../contact.html">İletişim</a>
+            </div>
+            <div class="footer-col">
+                <h4>Sosyal Medya</h4>
+                <a href="#">Discord</a>
+                <a href="#">Instagram</a>
+                <a href="#">YouTube</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2026 Yılan Oyunu — Tüm Hakları Saklıdır.
+        </div>
+    </footer>
+
+</body>
+</html>
