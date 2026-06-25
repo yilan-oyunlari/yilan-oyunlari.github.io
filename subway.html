@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box; 
+        }
+
+        body {
+            background: #121212; /* Thoda aur dark premium gaming look */
+            color: white;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /* =========================================
+           HEADER WITH FLEXBOX (Clean & Modern)
+        ========================================= */
+        header {
+            background-color: #000;
+            padding: 15px 30px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between; /* Sitename left mein, links right mein */
+            align-items: center;
+        }
+
+        .sitename {
+            font-size: 24px;
+            font-weight: bold;
+            color: #39ff14; /* Neon green logo text */
+        }
+
+        ul {
+            list-style-type: none;
+            display: flex;
+            gap: 20px; /* Links ke beech spacing */
+        }
+
+        ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        ul li a:hover {
+            color: #39ff14;
+        }
+        .game-wrapper {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.8);
+            width: 100%;
+            max-width: 900px; /* Game screen isse zyada badi nahi hogi */
+        }
+
+        /* iFrame ko responsive banane ka modern tarika */
+        iframe {
+            width: 100%;
+            aspect-ratio: 16/9; /* Yeh apne aap perfect TV jaisi screen bana dega */
+            border: 2px solid #333;
+            border-radius: 8px;
+            background-color: #000;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="sitename">My Gaming</div>
+            <ul>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Games</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="game-wrapper">
+        <!-- <iframe id="game-frame" 
+    src="https://games.crazygames.com/en_US/smash-karts/index.html?v=2.4" 
+    title="Smash Karts" 
+    scrolling="no" 
+    allow="autoplay; fullscreen; microphone;" 
+    allowfullscreen="true" 
+    style="border: none; border-radius: 15px; width: 100%; height: 500px; box-shadow: 0px 5px 15px rgba(0,0,0,0.5);">
+</iframe> -->
+
+<!-- <iframe 
+    id="game-frame" 
+    src="https://games.crazygames.com/en_US/goal-gang/index.html?isFirstSession=true&v=2.4" 
+    title="Goal Gang" 
+    scrolling="no" 
+    allow="autoplay; fullscreen; gamepad; focus-without-user-activation *; accelerometer; gyroscope;" 
+    allowfullscreen="true"
+    style="width: 100%; aspect-ratio: 16/9; border: 2px solid #333; border-radius: 8px; background-color: #000;">
+</iframe> -->
+
+<iframe 
+    id="game-frame" 
+    src="https://games.poki.com/5dd312fa-015f-11ea-ad56-9cb6d0d995f7?tag=pg-da499a66b0803a7f0c5211da3ea5079c2ff98979&amp;site_id=3&amp;iso_lang=en&amp;country=IN&amp;poki_url=https://poki.com/en/g/subway-surfers" 
+    title="Subway Surfers" 
+    scrolling="no" 
+    allow="autoplay; fullscreen; gamepad; keyboard-map;" 
+    sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-scripts allow-same-origin allow-downloads" 
+    style="width: 100%; aspect-ratio: 16/9; border: 2px solid #333; border-radius: 8px; background-color: #000;">
+</iframe>
+</div>
+<div>
+    <div class="game-details" style="color: white; padding: 20px; text-align: left; background: #000; border-radius: 15px; margin-top: 20px;">
+    <h2>Smash Karts</h2>
+    <p>Smash Karts is a 3D multiplayer IO kart battle game. Drive your go-kart, pick up weapons, and blow up other karts to win! Keep playing to level up and unlock new characters and prizes.</p>
+
+    <h3>How to Play Smash Karts</h3>
+    <p><strong>Battle and earn XP:</strong> Face off with other players in the arena for 3 minutes of kart-smashing mayhem. The game features several maps to explore, and it is continually updated with new ones. Each public match you play will give you XP, which you can then use to level up.</p>
+    <p>Leveling up will reward you with coins, hats, wheels, and character tokens. You can use character tokens in the prize machine to unlock new characters with varying rarity levels.</p>
+
+    <h3>Pick up weapons</h3>
+    <p>Drive over the boxes containing question marks to pick up random weapons and power-ups. You’ll find anything from invincibility to missiles, machine guns, and mines to use against your opponents.</p>
+    
+    <h4>Available Weapons:</h4>
+    <ul style="margin-left: 20px; list-style-type: square;">
+        <li><strong>Rockets:</strong> Fairly straightforward, helpful for hitting opponents in front of you.</li>
+        <li><strong>Machine Gun:</strong> Rapidly fires several projectiles and can take down enemies around you.</li>
+        <li><strong>Bullets:</strong> Fire a series of bullets that go straight from your position.</li>
+        <li><strong>Mines:</strong> Deploy three mines that serve as a static trap. Particularly effective around corners.</li>
+        <li><strong>Cannonballs:</strong> Sends four cannonballs in the direction of your choice. Requires precision.</li>
+        <li><strong>Spiky-Go-Round:</strong> Adds rotating balls with spikes to your vehicle.</li>
+        <li><strong>Nuke:</strong> A very powerful missile with a wide impact radius.</li>
+        <li><strong>Invincibility:</strong> The most powerful weapon, neutralizes shots and takes down any kart by touching it.</li>
+    </ul>
+
+    <h3>Features</h3>
+    <ul style="margin-left: 20px; list-style-type: square;">
+        <li>Action-packed multiplayer kart battles</li>
+        <li>Level up, earn coins, and save your stats</li>
+        <li>Several weapons, from miniguns to bombs!</li>
+        <li>Customizable karts and characters</li>
+    </ul>
+
+    <h3>Game Info</h3>
+    <p><strong>Release Date:</strong> March 2020<br>
+    <strong>Developer:</strong> Tall Team<br>
+    <strong>Platforms:</strong> Web browser (desktop and mobile), iOS, Android</p>
+</div>
+</div>
+    </main>
+</body>
+</html>
